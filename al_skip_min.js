@@ -1,210 +1,284 @@
 !(function () {
 	"use strict";
-	const t = "https://raw.githubusercontent.com/HONEYxCAT/al_skip_db/refs/heads/main/database/",
-		e = ["http://online3.skaz.tv/", "http://online4.skaz.tv/", "http://online5.skaz.tv/"],
-		a = e[Math.floor(Math.random() * e.length)],
-		n = (t) => new Promise((e) => setTimeout(e, t));
-	function i(t, e) {
-		t &&
-			"object" == typeof t &&
-			(t.segments || (t.segments = {}),
-			t.segments.skip || (t.segments.skip = []),
+	const e = "https://raw.githubusercontent.com/HONEYxCAT/al_skip_db/refs/heads/main/database/",
+		t = ["http://online3.skaz.tv/", "http://online4.skaz.tv/", "http://online5.skaz.tv/"],
+		n = t[Math.floor(Math.random() * t.length)],
+		i = "https://api.aniskip.com/v2/skip-times",
+		a = "https://api.jikan.moe/v4/anime",
+		s = ["op", "ed", "recap", "mixed-op", "mixed-ed"],
+		r = (e) => new Promise((t) => setTimeout(t, e));
+	function o(e, t = !1) {
+		(console.log("[UltimateSkip]: " + e), t && "undefined" != typeof Lampa && Lampa.Noty);
+	}
+	function l(e, t) {
+		if (!e || "object" != typeof e) return 0;
+		(e.segments || (e.segments = {}), e.segments.skip || (e.segments.skip = []));
+		let n = 0;
+		return (
+			t.forEach((t) => {
+				e.segments.skip.some((e) => e.start === t.start) || (e.segments.skip.push({ start: t.start, end: t.end, name: t.name || "Пропустить" }), n++);
+			}),
+			n
+		);
+	}
+	function c(e, t, n, i) {
+		e &&
+			Array.isArray(e) &&
 			e.forEach((e) => {
-				t.segments.skip.some((t) => t.start === e.start) || t.segments.skip.push({ start: e.start, end: e.end, name: e.name || "Пропустить" });
-			}));
+				const a = e.season || e.s || t;
+				(e.episode || e.e || e.episode_number) == n && a == t && l(e, i);
+			});
 	}
-	function s(t, e, a) {
-		if (!t) return null;
-		const n = String(e),
-			i = String(a);
-		return t[n] && t[n][i] ? t[n][i] : ("1" === n && "1" === i && t.movie) || t.movie ? t.movie : null;
+	function m(e, t, n) {
+		if (!e) return null;
+		const i = String(t),
+			a = String(n);
+		return e[i] && e[i][a] ? e[i][a] : ("1" === i && "1" === a && e.movie) || e.movie ? e.movie : null;
 	}
-	function r(t) {
-		let e = Lampa.Storage.get("lampac_unic_id", ""),
-			a = Lampa.Storage.get("account_email", "");
-		e || ((e = Lampa.Utils.uid(8).toLowerCase()), Lampa.Storage.set("lampac_unic_id", e));
-		const n = (t, e) => t + (t.indexOf("?") >= 0 ? "&" : "?") + e;
-		return (-1 === (t += "").indexOf("account_email=") && (t = n(t, "account_email=" + encodeURIComponent(a))), -1 === t.indexOf("uid=") && (t = n(t, "uid=" + encodeURIComponent(e))), -1 === t.indexOf("token=") && (t = n(t, "token=")), t);
+	function u(e) {
+		let t = Lampa.Storage.get("lampac_unic_id", ""),
+			n = Lampa.Storage.get("account_email", "");
+		t || ((t = Lampa.Utils.uid(8).toLowerCase()), Lampa.Storage.set("lampac_unic_id", t));
+		const i = (e, t) => e + (e.indexOf("?") >= 0 ? "&" : "?") + t;
+		return (-1 === (e += "").indexOf("account_email=") && (e = i(e, "account_email=" + encodeURIComponent(n))), -1 === e.indexOf("uid=") && (e = i(e, "uid=" + encodeURIComponent(t))), -1 === e.indexOf("token=") && (e = i(e, "token=")), e);
 	}
-	async function o(t) {
+	async function d(e) {
 		try {
-			const e = await fetch(t);
-			if (!e.ok) throw new Error(`HTTP error! status: ${e.status}`);
-			return await e.text();
-		} catch (t) {
-			throw t;
+			const t = await fetch(e);
+			if (!t.ok) throw new Error(`HTTP error! status: ${t.status}`);
+			return await t.text();
+		} catch (e) {
+			throw e;
 		}
 	}
-	async function l(e) {
-		let l = e.movie || e.card;
-		if (!l) {
-			const t = Lampa.Activity.active();
-			t && (l = t.movie || t.card);
+	async function p(t) {
+		let p = t.movie || t.card;
+		if (!p) {
+			const e = Lampa.Activity.active();
+			e && (p = e.movie || e.card);
 		}
-		if (!l) return;
-		const c = l.kinopoisk_id || ("kinopoisk" === l.source ? l.id : null) || l.kp_id;
-		let u = e.episode || e.e || e.episode_number || 1,
-			m = e.season || e.s || 1;
-		if ((l.number_of_seasons > 0 || (l.original_name && !l.original_title) || ((m = 1), (u = 1)), c)) {
-			const a = await (async function (e) {
+		if (!p) return;
+		const f = p.kinopoisk_id || ("kinopoisk" === p.source ? p.id : null) || p.kp_id;
+		let k = t.episode || t.e || t.episode_number || 1,
+			g = t.season || t.s || 1;
+		if ((p.number_of_seasons > 0 || (p.original_name && !p.original_title) || ((g = 1), (k = 1)), o(`Start search for: ${p.title} (S${g} E${k})`), f)) {
+			const n = await (async function (t) {
 				try {
-					const a = `${t}${e}.json`,
-						n = await fetch(a);
-					return n.ok ? await n.json() : null;
-				} catch (t) {
+					const n = `${e}${t}.json`,
+						i = await fetch(n);
+					return i.ok ? await i.json() : null;
+				} catch (e) {
 					return null;
 				}
-			})(c);
-			if (a) {
-				const t = s(a, m, u);
+			})(f);
+			if (n) {
+				o(`[Success] Found in GitHub DB (KP: ${f})`);
+				const e = m(n, g, k);
 				return (
-					t && i(e, t),
+					e && (l(t, e), Lampa.Noty.show("Таймкоды загружены (GitHub)")),
 					void (
-						e.playlist &&
-						Array.isArray(e.playlist) &&
-						e.playlist.forEach((t) => {
-							let e = t.season || t.s || m,
-								n = t.episode || t.e || t.episode_number;
-							if (e && n) {
-								const r = s(a, e, n);
-								r && i(t, r);
+						t.playlist &&
+						Array.isArray(t.playlist) &&
+						t.playlist.forEach((e) => {
+							let t = e.season || e.s || g,
+								i = e.episode || e.e || e.episode_number;
+							if (t && i) {
+								const a = m(n, t, i);
+								a && l(e, a);
 							}
 						})
 					)
 				);
 			}
 		}
-		const d = await (async function (t, e, i) {
-			const s = t.title || t.name,
-				l = t.original_title || t.original_name,
-				c = (t.release_date || t.first_air_date || "0000").slice(0, 4),
-				u = { id: t.id, imdb_id: t.imdb_id || "", kinopoisk_id: t.kinopoisk_id || "", title: s, original_title: l, year: c, serial: t.number_of_seasons || e > 0 ? 1 : 0, source: "tmdb", life: !0 },
-				m = Object.keys(u)
-					.map((t) => `${t}=${encodeURIComponent(u[t])}`)
+		o("GitHub failed, trying Skaz...");
+		const h = await (async function (e, t, i) {
+			const a = e.title || e.name,
+				s = e.original_title || e.original_name,
+				o = (e.release_date || e.first_air_date || "0000").slice(0, 4),
+				l = { id: e.id, imdb_id: e.imdb_id || "", kinopoisk_id: e.kinopoisk_id || "", title: a, original_title: s, year: o, serial: e.number_of_seasons || t > 0 ? 1 : 0, source: "tmdb", life: !0 },
+				c = Object.keys(l)
+					.map((e) => `${e}=${encodeURIComponent(l[e])}`)
 					.join("&");
 			try {
-				let t = r(`${a}lite/events?${m}`),
-					s = await o(t),
-					l = JSON.parse(s),
-					c = null;
-				if (l.life && l.memkey) {
-					const t = 7500,
-						e = 250,
-						i = Math.ceil(t / e);
-					for (let t = 1; t <= i; t++) {
-						await n(e);
-						const t = r(`${a}lifeevents?memkey=${l.memkey}&${m}`);
+				let e = u(`${n}lite/events?${c}`),
+					a = await d(e),
+					s = JSON.parse(a),
+					o = null;
+				if (s.life && s.memkey) {
+					const e = 7500,
+						t = 250,
+						i = Math.ceil(e / t);
+					for (let e = 1; e <= i; e++) {
+						await r(t);
+						const e = u(`${n}lifeevents?memkey=${s.memkey}&${c}`);
 						try {
-							let e = await o(t),
-								a = JSON.parse(e);
-							const n = (Array.isArray(a) ? a : a.online || []).find((t) => t.name && t.name.toLowerCase().includes("alloha"));
-							if (n) {
-								c = n;
+							let t = await d(e),
+								n = JSON.parse(t);
+							const i = (Array.isArray(n) ? n : n.online || []).find((e) => e.name && e.name.toLowerCase().includes("alloha"));
+							if (i) {
+								o = i;
 								break;
 							}
-						} catch (t) {}
+						} catch (e) {}
 					}
-				} else c = (Array.isArray(l) ? l : l.online || []).find((t) => t.name && t.name.toLowerCase().includes("alloha"));
-				if (!c) return null;
-				let u = r(`${c.url}${c.url.includes("?") ? "&" : "?"}${m}`),
-					d = 0;
-				for (; d < 5; ) {
-					d++;
-					const t = await o(u);
-					let a = !1,
-						n = null;
-					if (t.trim().startsWith("{") || t.trim().startsWith("["))
+				} else o = (Array.isArray(s) ? s : s.online || []).find((e) => e.name && e.name.toLowerCase().includes("alloha"));
+				if (!o) return null;
+				let l = u(`${o.url}${o.url.includes("?") ? "&" : "?"}${c}`),
+					m = 0;
+				for (; m < 5; ) {
+					m++;
+					const e = await d(l);
+					let n = !1,
+						a = null;
+					if (e.trim().startsWith("{") || e.trim().startsWith("["))
 						try {
-							((n = JSON.parse(t)), (a = !0));
-						} catch (t) {}
-					if (a) {
-						if (n.segments) return n.segments;
-						if (n.url && !n.playlist) {
-							u = r(n.url);
+							((a = JSON.parse(e)), (n = !0));
+						} catch (e) {}
+					if (n) {
+						if (a.segments) return a.segments;
+						if (a.url && !a.playlist) {
+							l = u(a.url);
 							continue;
 						}
 					}
-					const s = new DOMParser().parseFromString(t, "text/html").querySelectorAll(".videos__item");
-					if (0 === s.length && !a) break;
-					let l = null;
-					const c = (t) => (t || "").toLowerCase().trim(),
-						m = (t) => {
-							const e = c(t).match(/(\d+)/);
-							return e ? parseInt(e[1], 10) : null;
+					const s = new DOMParser().parseFromString(e, "text/html").querySelectorAll(".videos__item");
+					if (0 === s.length && !n) break;
+					let r = null;
+					const o = (e) => (e || "").toLowerCase().trim(),
+						c = (e) => {
+							const t = o(e).match(/(\d+)/);
+							return t ? parseInt(t[1], 10) : null;
 						};
-					for (let t = 0; t < s.length; t++) {
-						const a = s[t],
-							n = a.getAttribute("s"),
-							r = a.getAttribute("e"),
-							o = c(a.textContent);
-						if (n && r) {
-							if (n == e && r == i) {
-								l = a;
+					for (let e = 0; e < s.length; e++) {
+						const n = s[e],
+							a = n.getAttribute("s"),
+							l = n.getAttribute("e"),
+							m = o(n.textContent);
+						if (a && l) {
+							if (a == t && l == i) {
+								r = n;
 								break;
 							}
-						} else if (n) {
-							if (n == e) {
-								l = a;
+						} else if (a) {
+							if (a == t) {
+								r = n;
 								break;
 							}
 						} else {
-							if (o.includes("сезон") && m(o) == e) {
-								l = a;
+							if (m.includes("сезон") && c(m) == t) {
+								r = n;
 								break;
 							}
-							if (o.includes("серия") && m(o) == i) {
-								l = a;
+							if (m.includes("серия") && c(m) == i) {
+								r = n;
 								break;
 							}
 						}
 					}
-					if (!l) {
-						const t = c(s[0].textContent);
-						if (t.includes("сезон") || t.includes("серия") || s[0].hasAttribute("s") || s[0].hasAttribute("e")) break;
-						l = s[0];
+					if (!r) {
+						const e = o(s[0].textContent);
+						if (e.includes("сезон") || e.includes("серия") || s[0].hasAttribute("s") || s[0].hasAttribute("e")) break;
+						r = s[0];
 					}
-					const p = l.getAttribute("data-json");
+					const p = r.getAttribute("data-json");
 					if (!p) break;
 					try {
-						const t = JSON.parse(p);
-						if (!t || !t.url) break;
-						u = r(t.url);
-					} catch (t) {
+						const e = JSON.parse(p);
+						if (!e || !e.url) break;
+						l = u(e.url);
+					} catch (e) {
 						break;
 					}
 				}
-			} catch (t) {}
+			} catch (e) {}
 			return null;
-		})(l, m, u);
-		if (d) {
-			const t = (p = d) && p.skip && Array.isArray(p.skip) ? p.skip.filter((t) => null != t.start && null != t.end).map((t) => ({ start: t.start, end: t.end, name: "Пропустить" })) : [];
-			t.length > 0 &&
-				(i(e, t),
-				e.playlist &&
-					Array.isArray(e.playlist) &&
-					e.playlist.forEach((e) => {
-						e.episode == u && e.season == m && i(e, t);
-					}));
+		})(p, g, k);
+		if (h) {
+			const e = (y = h) && y.skip && Array.isArray(y.skip) ? y.skip.filter((e) => null != e.start && null != e.end).map((e) => ({ start: e.start, end: e.end, name: "Пропустить" })) : [];
+			if (e.length > 0) return (o("[Success] Found in Skaz"), l(t, e), c(t.playlist, g, k, e), void Lampa.Noty.show("Таймкоды загружены (Skaz)"));
 		}
-		var p;
+		var y;
+		o("Skaz failed, checking for Anime criteria...");
+		const w = (p.original_language || "").toLowerCase(),
+			_ = "ja" === w || "zh" === w || "cn" === w,
+			L = p.genres && p.genres.some((e) => 16 === e.id || (e.name && "animation" === e.name.toLowerCase()));
+		if (!_ && !L) return void o("Not an Anime (Language/Genre mismatch). Finished.");
+		o("Anime criteria matched. Trying AniSkip...");
+		const b = (v = p.original_name || p.original_title || p.name)
+			? v
+					.replace(/\(\d{4}\)/g, "")
+					.replace(/\(TV\)/gi, "")
+					.replace(/Season \d+/gi, "")
+					.replace(/Part \d+/gi, "")
+					.replace(/[:\-]/g, " ")
+					.replace(/\s+/g, " ")
+					.trim()
+			: "";
+		var v;
+		const S = await (async function (e, t) {
+			let n = e;
+			t > 1 && (n += " Season " + t);
+			const i = `${a}?q=${encodeURIComponent(n)}&limit=5`;
+			try {
+				const e = await fetch(i),
+					t = await e.json();
+				return t.data && 0 !== t.data.length ? t.data[0].mal_id : null;
+			} catch (e) {
+				return (o("Jikan Error: " + e.message), null);
+			}
+		})(b, g);
+		if (S) {
+			const e = await (async function (e, t) {
+					const n = s.map((e) => "types=" + e);
+					n.push("episodeLength=0");
+					const a = `${i}/${e}/${t}?${n.join("&")}`;
+					try {
+						const e = await fetch(a);
+						if (404 === e.status) return [];
+						const t = await e.json();
+						return (t.found && t.results) || [];
+					} catch (e) {
+						return [];
+					}
+				})(S, k),
+				n = (function (e) {
+					if (!e || !e.length) return [];
+					const t = [];
+					return (
+						e.forEach((e) => {
+							if (!e.interval) return;
+							const n = (e.skipType || e.skip_type || "").toLowerCase();
+							let i = "Пропустить";
+							n.includes("op") ? (i = "Опенинг") : n.includes("ed") ? (i = "Эндинг") : "recap" === n && (i = "Рекап");
+							const a = void 0 !== e.interval.startTime ? e.interval.startTime : e.interval.start_time,
+								s = void 0 !== e.interval.endTime ? e.interval.endTime : e.interval.end_time;
+							void 0 !== a && void 0 !== s && t.push({ start: a, end: s, name: i });
+						}),
+						t
+					);
+				})(e);
+			n.length > 0 ? (o("[Success] Found in AniSkip"), l(t, n), c(t.playlist, g, k, n), Lampa.Noty.show("Таймкоды загружены (AniSkip)"), window.Lampa.Player.listener && window.Lampa.Player.listener.send("segments", { skip: t.segments.skip })) : o("AniSkip returned no segments.");
+		} else o("Jikan ID not found.");
 	}
-	function c() {
-		if (window.lampa_alloha_skip_combined) return;
-		window.lampa_alloha_skip_combined = !0;
-		const t = Lampa.Player.play;
-		Lampa.Player.play = function (e) {
-			const a = this;
+	function f() {
+		if (window.lampa_ultimate_skip) return;
+		window.lampa_ultimate_skip = !0;
+		const e = Lampa.Player.play;
+		((Lampa.Player.play = function (t) {
+			const n = this;
 			(Lampa.Loading.start(() => {
-				(Lampa.Loading.stop(), t.call(a, e));
+				(Lampa.Loading.stop(), e.call(n, t));
 			}),
-				l(e)
+				p(t)
 					.then(() => {
-						(Lampa.Loading.stop(), t.call(a, e));
+						(Lampa.Loading.stop(), e.call(n, t));
 					})
-					.catch((n) => {
-						(Lampa.Loading.stop(), t.call(a, e));
+					.catch((i) => {
+						(console.error("[UltimateSkip] Critical Error:", i), Lampa.Loading.stop(), e.call(n, t));
 					}));
-		};
+		}),
+			console.log("[UltimateSkip] Combined Plugin Loaded (DB -> Skaz -> AniSkip)"));
 	}
-	window.Lampa && window.Lampa.Player ? c() : window.document.addEventListener("app_ready", c);
+	window.Lampa && window.Lampa.Player ? f() : window.document.addEventListener("app_ready", f);
 })();
