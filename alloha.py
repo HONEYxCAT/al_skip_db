@@ -8,7 +8,7 @@ from playwright.async_api import async_playwright
 DB_FOLDER = "database"
 INPUT_FILE = "ids.txt"
 BASE_URL_TEMPLATE = "https://reyohoho-gitlab.vercel.app/movie/{}"
-CONCURRENT_LIMIT = 20  # Количество одновременных вкладок (можно увеличить до 10, если мощный ПК)
+CONCURRENT_LIMIT = 20
 
 # Глобальный лок для записи в файл
 file_lock = asyncio.Lock()
@@ -20,8 +20,8 @@ git_lock = asyncio.Lock()
 # ===========================
 
 def get_file_path(kp_id):
-    if not os.path.exists(DB_FOLDER):
-        os.makedirs(DB_FOLDER)
+    # Мягкая оптимизация: безопасно создаем папку, если ее еще нет
+    os.makedirs(DB_FOLDER, exist_ok=True)
     return os.path.join(DB_FOLDER, f"{kp_id}.json")
 
 def is_movie_processed(kp_id):
@@ -46,26 +46,45 @@ def parse_alloha_string(skip_str):
         except ValueError: continue
     return segments
 
-async def update_id_status_in_file(target_id, status_text):
+async def update_id_status_in_file(target_id, status_text, force_flush=False):
     async with file_lock:
         try:
+            # Ленивая запись статусов: копим изменения и пишем батчами
+            if not hasattr(update_id_status_in_file, "_pending_updates"):
+                update_id_status_in_file._pending_updates = []
+
+            if not force_flush:
+                # Добавляем новый статус в очередь
+                update_id_status_in_file._pending_updates.append((target_id, status_text))
+
+                # Если еще не набралось 50 ID — просто выходим
+                if len(update_id_status_in_file._pending_updates) < 50:
+                    return
+
+            # Если force_flush=True или набралось >= 50 ID — делаем запись
+            pending = update_id_status_in_file._pending_updates
+            if not pending:
+                return
+
+            update_id_status_in_file._pending_updates = []
+
             # Читаем и пишем синхронно внутри лока, это быстро
             with open(INPUT_FILE, 'r', encoding='utf-8') as f:
                 lines = f.readlines()
 
+            # Готовим словарь для быстрых обновлений по ID
+            pending_dict = {kp_id: status for kp_id, status in pending}
+
             new_lines = []
-            updated = False
             for line in lines:
                 parts = line.strip().split()
-                if parts and parts[0] == target_id:
-                    new_lines.append(f"{target_id} {status_text}\n")
-                    updated = True
+                if parts and parts[0] in pending_dict:
+                    new_lines.append(f"{parts[0]} {pending_dict[parts[0]]}\n")
                 else:
                     new_lines.append(line)
 
-            if updated:
-                with open(INPUT_FILE, 'w', encoding='utf-8') as f:
-                    f.writelines(new_lines)
+            with open(INPUT_FILE, 'w', encoding='utf-8') as f:
+                f.writelines(new_lines)
         except Exception as e:
             print(f"   [FILE ERROR] Не удалось записать статус: {e}")
 
@@ -368,8 +387,8 @@ async def worker(name, queue, browser, stats):
                         status = "Успешно"
                         print(f"[{name}] ID {kp_id}: [OK] Данные сохранены.")
 
-                        # Проверяем, кратно ли 10 количество успешных
-                        if stats['success_count'] > 0 and stats['success_count'] % 10 == 0:
+                        # Проверяем, кратно ли 100 количество успешных
+                        if stats['success_count'] > 0 and stats['success_count'] % 100 == 0:
                             print(f"\n[{name}] >>> Найдено {stats['success_count']} новых. Выполняю промежуточный Git Push...")
                             async with git_lock:
                                 await asyncio.to_thread(git_autopush)
@@ -443,6 +462,9 @@ async def main():
                 task.cancel()
             await asyncio.gather(*tasks, return_exceptions=True)
             await browser.close()
+
+    # Всегда дописываем оставшиеся статусы (даже если все были с ошибкой)
+    await update_id_status_in_file(None, None, force_flush=True)
 
     if stats['success_count'] > 0:
         # Финальный пуш, если что-то осталось
