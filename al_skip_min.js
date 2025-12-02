@@ -42,7 +42,7 @@
 		const i = (e, t) => e + (e.indexOf("?") >= 0 ? "&" : "?") + t;
 		return (-1 === (e += "").indexOf("account_email=") && (e = i(e, "account_email=" + encodeURIComponent(n))), -1 === e.indexOf("uid=") && (e = i(e, "uid=" + encodeURIComponent(t))), -1 === e.indexOf("token=") && (e = i(e, "token=")), e);
 	}
-	async function d(e) {
+	async function p(e) {
 		try {
 			const t = await fetch(e);
 			if (!t.ok) throw new Error(`HTTP error! status: ${t.status}`);
@@ -51,17 +51,17 @@
 			throw e;
 		}
 	}
-	async function p(t) {
-		let p = t.movie || t.card;
-		if (!p) {
+	async function d(t) {
+		let d = t.movie || t.card;
+		if (!d) {
 			const e = Lampa.Activity.active();
-			e && (p = e.movie || e.card);
+			e && (d = e.movie || e.card);
 		}
-		if (!p) return;
-		const f = p.kinopoisk_id || ("kinopoisk" === p.source ? p.id : null) || p.kp_id;
+		if (!d) return;
+		const f = d.kinopoisk_id || ("kinopoisk" === d.source ? d.id : null) || d.kp_id;
 		let k = t.episode || t.e || t.episode_number || 1,
 			g = t.season || t.s || 1;
-		if ((p.number_of_seasons > 0 || (p.original_name && !p.original_title) || ((g = 1), (k = 1)), o(`Start search for: ${p.title} (S${g} E${k})`), f)) {
+		if ((d.number_of_seasons > 0 || (d.original_name && !d.original_title) || ((g = 1), (k = 1)), o(`Start search for: ${d.title} (S${g} E${k})`), f)) {
 			const n = await (async function (t) {
 				try {
 					const n = `${e}${t}.json`,
@@ -91,8 +91,70 @@
 				);
 			}
 		}
-		o("GitHub failed, trying Skaz...");
-		const h = await (async function (e, t, i) {
+		o("GitHub failed, checking for Anime criteria...");
+		const h = (d.original_language || "").toLowerCase(),
+			y = "ja" === h || "zh" === h || "cn" === h,
+			w = d.genres && d.genres.some((e) => 16 === e.id || (e.name && "animation" === e.name.toLowerCase()));
+		if (y || w) {
+			o("Anime criteria matched. Trying AniSkip...");
+			const e = (_ = d.original_name || d.original_title || d.name)
+					? _.replace(/\(\d{4}\)/g, "")
+							.replace(/\(TV\)/gi, "")
+							.replace(/Season \d+/gi, "")
+							.replace(/Part \d+/gi, "")
+							.replace(/[:\-]/g, " ")
+							.replace(/\s+/g, " ")
+							.trim()
+					: "",
+				n = await (async function (e, t) {
+					let n = e;
+					t > 1 && (n += " Season " + t);
+					const i = `${a}?q=${encodeURIComponent(n)}&limit=5`;
+					try {
+						const e = await fetch(i),
+							t = await e.json();
+						return t.data && 0 !== t.data.length ? t.data[0].mal_id : null;
+					} catch (e) {
+						return (o("Jikan Error: " + e.message), null);
+					}
+				})(e, g);
+			if (n) {
+				const e = await (async function (e, t) {
+						const n = s.map((e) => "types=" + e);
+						n.push("episodeLength=0");
+						const a = `${i}/${e}/${t}?${n.join("&")}`;
+						try {
+							const e = await fetch(a);
+							if (404 === e.status) return [];
+							const t = await e.json();
+							return (t.found && t.results) || [];
+						} catch (e) {
+							return [];
+						}
+					})(n, k),
+					a = (function (e) {
+						if (!e || !e.length) return [];
+						const t = [];
+						return (
+							e.forEach((e) => {
+								if (!e.interval) return;
+								const n = (e.skipType || e.skip_type || "").toLowerCase();
+								let i = "Пропустить";
+								n.includes("op") ? (i = "Опенинг") : n.includes("ed") ? (i = "Эндинг") : "recap" === n && (i = "Рекап");
+								const a = void 0 !== e.interval.startTime ? e.interval.startTime : e.interval.start_time,
+									s = void 0 !== e.interval.endTime ? e.interval.endTime : e.interval.end_time;
+								void 0 !== a && void 0 !== s && t.push({ start: a, end: s, name: i });
+							}),
+							t
+						);
+					})(e);
+				if (a.length > 0) return (o("[Success] Found in AniSkip"), l(t, a), c(t.playlist, g, k, a), Lampa.Noty.show("Таймкоды загружены (AniSkip)"), void (window.Lampa.Player.listener && window.Lampa.Player.listener.send("segments", { skip: t.segments.skip })));
+				o("AniSkip returned no segments.");
+			} else o("Jikan ID not found.");
+		} else o("Not an Anime (Language/Genre mismatch). Skipping AniSkip.");
+		var _;
+		o("AniSkip failed, trying Skaz...");
+		const L = await (async function (e, t, i) {
 			const a = e.title || e.name,
 				s = e.original_title || e.original_name,
 				o = (e.release_date || e.first_air_date || "0000").slice(0, 4),
@@ -102,7 +164,7 @@
 					.join("&");
 			try {
 				let e = u(`${n}lite/events?${c}`),
-					a = await d(e),
+					a = await p(e),
 					s = JSON.parse(a),
 					o = null;
 				if (s.life && s.memkey) {
@@ -113,7 +175,7 @@
 						await r(t);
 						const e = u(`${n}lifeevents?memkey=${s.memkey}&${c}`);
 						try {
-							let t = await d(e),
+							let t = await p(e),
 								n = JSON.parse(t);
 							const i = (Array.isArray(n) ? n : n.online || []).find((e) => e.name && e.name.toLowerCase().includes("alloha"));
 							if (i) {
@@ -128,7 +190,7 @@
 					m = 0;
 				for (; m < 5; ) {
 					m++;
-					const e = await d(l);
+					const e = await p(l);
 					let n = !1,
 						a = null;
 					if (e.trim().startsWith("{") || e.trim().startsWith("["))
@@ -181,10 +243,10 @@
 						if (e.includes("сезон") || e.includes("серия") || s[0].hasAttribute("s") || s[0].hasAttribute("e")) break;
 						r = s[0];
 					}
-					const p = r.getAttribute("data-json");
-					if (!p) break;
+					const d = r.getAttribute("data-json");
+					if (!d) break;
 					try {
-						const e = JSON.parse(p);
+						const e = JSON.parse(d);
 						if (!e || !e.url) break;
 						l = u(e.url);
 					} catch (e) {
@@ -193,73 +255,12 @@
 				}
 			} catch (e) {}
 			return null;
-		})(p, g, k);
-		if (h) {
-			const e = (y = h) && y.skip && Array.isArray(y.skip) ? y.skip.filter((e) => null != e.start && null != e.end).map((e) => ({ start: e.start, end: e.end, name: "Пропустить" })) : [];
+		})(d, g, k);
+		if (L) {
+			const e = (S = L) && S.skip && Array.isArray(S.skip) ? S.skip.filter((e) => null != e.start && null != e.end).map((e) => ({ start: e.start, end: e.end, name: "Пропустить" })) : [];
 			if (e.length > 0) return (o("[Success] Found in Skaz"), l(t, e), c(t.playlist, g, k, e), void Lampa.Noty.show("Таймкоды загружены (Skaz)"));
 		}
-		var y;
-		o("Skaz failed, checking for Anime criteria...");
-		const w = (p.original_language || "").toLowerCase(),
-			_ = "ja" === w || "zh" === w || "cn" === w,
-			L = p.genres && p.genres.some((e) => 16 === e.id || (e.name && "animation" === e.name.toLowerCase()));
-		if (!_ && !L) return void o("Not an Anime (Language/Genre mismatch). Finished.");
-		o("Anime criteria matched. Trying AniSkip...");
-		const b = (v = p.original_name || p.original_title || p.name)
-			? v
-					.replace(/\(\d{4}\)/g, "")
-					.replace(/\(TV\)/gi, "")
-					.replace(/Season \d+/gi, "")
-					.replace(/Part \d+/gi, "")
-					.replace(/[:\-]/g, " ")
-					.replace(/\s+/g, " ")
-					.trim()
-			: "";
-		var v;
-		const S = await (async function (e, t) {
-			let n = e;
-			t > 1 && (n += " Season " + t);
-			const i = `${a}?q=${encodeURIComponent(n)}&limit=5`;
-			try {
-				const e = await fetch(i),
-					t = await e.json();
-				return t.data && 0 !== t.data.length ? t.data[0].mal_id : null;
-			} catch (e) {
-				return (o("Jikan Error: " + e.message), null);
-			}
-		})(b, g);
-		if (S) {
-			const e = await (async function (e, t) {
-					const n = s.map((e) => "types=" + e);
-					n.push("episodeLength=0");
-					const a = `${i}/${e}/${t}?${n.join("&")}`;
-					try {
-						const e = await fetch(a);
-						if (404 === e.status) return [];
-						const t = await e.json();
-						return (t.found && t.results) || [];
-					} catch (e) {
-						return [];
-					}
-				})(S, k),
-				n = (function (e) {
-					if (!e || !e.length) return [];
-					const t = [];
-					return (
-						e.forEach((e) => {
-							if (!e.interval) return;
-							const n = (e.skipType || e.skip_type || "").toLowerCase();
-							let i = "Пропустить";
-							n.includes("op") ? (i = "Опенинг") : n.includes("ed") ? (i = "Эндинг") : "recap" === n && (i = "Рекап");
-							const a = void 0 !== e.interval.startTime ? e.interval.startTime : e.interval.start_time,
-								s = void 0 !== e.interval.endTime ? e.interval.endTime : e.interval.end_time;
-							void 0 !== a && void 0 !== s && t.push({ start: a, end: s, name: i });
-						}),
-						t
-					);
-				})(e);
-			n.length > 0 ? (o("[Success] Found in AniSkip"), l(t, n), c(t.playlist, g, k, n), Lampa.Noty.show("Таймкоды загружены (AniSkip)"), window.Lampa.Player.listener && window.Lampa.Player.listener.send("segments", { skip: t.segments.skip })) : o("AniSkip returned no segments.");
-		} else o("Jikan ID not found.");
+		var S;
 	}
 	function f() {
 		if (window.lampa_ultimate_skip) return;
@@ -270,7 +271,7 @@
 			(Lampa.Loading.start(() => {
 				(Lampa.Loading.stop(), e.call(n, t));
 			}),
-				p(t)
+				d(t)
 					.then(() => {
 						(Lampa.Loading.stop(), e.call(n, t));
 					})
@@ -278,7 +279,7 @@
 						(console.error("[UltimateSkip] Critical Error:", i), Lampa.Loading.stop(), e.call(n, t));
 					}));
 		}),
-			console.log("[UltimateSkip] Combined Plugin Loaded (DB -> Skaz -> AniSkip)"));
+			console.log("[UltimateSkip] Combined Plugin Loaded (DB -> AniSkip -> Skaz)"));
 	}
 	window.Lampa && window.Lampa.Player ? f() : window.document.addEventListener("app_ready", f);
 })();
