@@ -151,9 +151,10 @@
 				if (a.length > 0) return (o("[Success] Found in AniSkip"), l(t, a), c(t.playlist, g, k, a), Lampa.Noty.show("Таймкоды загружены (AniSkip)"), void (window.Lampa.Player.listener && window.Lampa.Player.listener.send("segments", { skip: t.segments.skip })));
 				o("AniSkip returned no segments.");
 			} else o("Jikan ID not found.");
-		} else o("Not an Anime (Language/Genre mismatch). Skipping AniSkip.");
+			return void o("Skipping Skaz because content is identified as Anime.");
+		}
 		var _;
-		o("AniSkip failed, trying Skaz...");
+		(o("Not an Anime (Language/Genre mismatch). Skipping AniSkip."), o("AniSkip failed, trying Skaz..."));
 		const L = await (async function (e, t, i) {
 			const a = e.title || e.name,
 				s = e.original_title || e.original_name,
@@ -163,92 +164,92 @@
 					.map((e) => `${e}=${encodeURIComponent(l[e])}`)
 					.join("&");
 			try {
-				let e = u(`${n}lite/events?${c}`),
-					a = await p(e),
-					s = JSON.parse(a),
-					o = null;
-				if (s.life && s.memkey) {
-					const e = 7500,
-						t = 250,
-						i = Math.ceil(e / t);
-					for (let e = 1; e <= i; e++) {
-						await r(t);
-						const e = u(`${n}lifeevents?memkey=${s.memkey}&${c}`);
+				let a = u(`${n}lite/events?${c}`),
+					s = await p(a),
+					o = JSON.parse(s),
+					l = null;
+				if (o.life && o.memkey) {
+					const t = 7500,
+						i = 250,
+						a = Math.ceil(t / i);
+					for (let t = 1; t <= a; t++) {
+						await r(i);
+						const t = u(`${n}lifeevents?memkey=${o.memkey}&${c}`);
 						try {
-							let t = await p(e),
-								n = JSON.parse(t);
+							let e = await p(t),
+								n = JSON.parse(e);
 							const i = (Array.isArray(n) ? n : n.online || []).find((e) => e.name && e.name.toLowerCase().includes("alloha"));
 							if (i) {
-								o = i;
+								l = i;
 								break;
 							}
 						} catch (e) {}
 					}
-				} else o = (Array.isArray(s) ? s : s.online || []).find((e) => e.name && e.name.toLowerCase().includes("alloha"));
-				if (!o) return null;
-				let l = u(`${o.url}${o.url.includes("?") ? "&" : "?"}${c}`),
-					m = 0;
-				for (; m < 5; ) {
-					m++;
-					const e = await p(l);
-					let n = !1,
-						a = null;
-					if (e.trim().startsWith("{") || e.trim().startsWith("["))
+				} else l = (Array.isArray(o) ? o : o.online || []).find((e) => e.name && e.name.toLowerCase().includes("alloha"));
+				if (!l) return null;
+				let m = u(`${l.url}${l.url.includes("?") ? "&" : "?"}${c}`),
+					d = 0;
+				for (; d < 5; ) {
+					d++;
+					const n = await p(m);
+					let a = !1,
+						s = null;
+					if (n.trim().startsWith("{") || n.trim().startsWith("["))
 						try {
-							((a = JSON.parse(e)), (n = !0));
+							((s = JSON.parse(n)), (a = !0));
 						} catch (e) {}
-					if (n) {
-						if (a.segments) return a.segments;
-						if (a.url && !a.playlist) {
-							l = u(a.url);
+					if (a) {
+						if (s.segments) return s.segments;
+						if (s.url && !s.playlist) {
+							m = u(s.url);
 							continue;
 						}
 					}
-					const s = new DOMParser().parseFromString(e, "text/html").querySelectorAll(".videos__item");
-					if (0 === s.length && !n) break;
-					let r = null;
-					const o = (e) => (e || "").toLowerCase().trim(),
+					const r = new DOMParser().parseFromString(n, "text/html").querySelectorAll(".videos__item");
+					if (0 === r.length && !a) break;
+					let o = null;
+					const l = (e) => (e || "").toLowerCase().trim(),
 						c = (e) => {
-							const t = o(e).match(/(\d+)/);
+							const t = l(e).match(/(\d+)/);
 							return t ? parseInt(t[1], 10) : null;
 						};
-					for (let e = 0; e < s.length; e++) {
-						const n = s[e],
+					for (let e = 0; e < r.length; e++) {
+						const n = r[e],
 							a = n.getAttribute("s"),
-							l = n.getAttribute("e"),
-							m = o(n.textContent);
-						if (a && l) {
-							if (a == t && l == i) {
-								r = n;
+							s = n.getAttribute("e"),
+							m = l(n.textContent);
+						if (a && s) {
+							if (a == t && s == i) {
+								o = n;
 								break;
 							}
 						} else if (a) {
 							if (a == t) {
-								r = n;
+								o = n;
 								break;
 							}
 						} else {
 							if (m.includes("сезон") && c(m) == t) {
-								r = n;
+								o = n;
 								break;
 							}
 							if (m.includes("серия") && c(m) == i) {
-								r = n;
+								o = n;
 								break;
 							}
 						}
 					}
-					if (!r) {
-						const e = o(s[0].textContent);
-						if (e.includes("сезон") || e.includes("серия") || s[0].hasAttribute("s") || s[0].hasAttribute("e")) break;
-						r = s[0];
+					if (!o) {
+						const e = l(r[0].textContent);
+						if (e.includes("сезон") || e.includes("серия") || r[0].hasAttribute("s") || r[0].hasAttribute("e")) break;
+						o = r[0];
 					}
-					const d = r.getAttribute("data-json");
-					if (!d) break;
+					const f = o.getAttribute("data-json");
+					if (!f) break;
 					try {
-						const e = JSON.parse(d);
+						const e = JSON.parse(f);
 						if (!e || !e.url) break;
-						l = u(e.url);
+						m = u(e.url);
 					} catch (e) {
 						break;
 					}
