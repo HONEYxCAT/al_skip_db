@@ -5,7 +5,7 @@
 		n = t[Math.floor(Math.random() * t.length)],
 		i = "https://api.aniskip.com/v2/skip-times",
 		a = "https://api.jikan.moe/v4/anime",
-		s = ["op", "ed", "recap", "mixed-op", "mixed-ed"],
+		s = ["op", "ed"],
 		r = (e) => new Promise((t) => setTimeout(t, e));
 	function o(e, t = !1) {
 		(console.log("[UltimateSkip]: " + e), t && "undefined" != typeof Lampa && Lampa.Noty);
@@ -29,13 +29,13 @@
 				(e.episode || e.e || e.episode_number) == n && a == t && l(e, i);
 			});
 	}
-	function m(e, t, n) {
+	function u(e, t, n) {
 		if (!e) return null;
 		const i = String(t),
 			a = String(n);
 		return e[i] && e[i][a] ? e[i][a] : ("1" === i && "1" === a && e.movie) || e.movie ? e.movie : null;
 	}
-	function u(e) {
+	function m(e) {
 		let t = Lampa.Storage.get("lampac_unic_id", ""),
 			n = Lampa.Storage.get("account_email", "");
 		t || ((t = Lampa.Utils.uid(8).toLowerCase()), Lampa.Storage.set("lampac_unic_id", t));
@@ -73,7 +73,7 @@
 			})(f);
 			if (n) {
 				o(`[Success] Found in GitHub DB (KP: ${f})`);
-				const e = m(n, g, k);
+				const e = u(n, g, k);
 				return (
 					e && (l(t, e), Lampa.Noty.show("Таймкоды загружены (GitHub)")),
 					void (
@@ -83,7 +83,7 @@
 							let t = e.season || e.s || g,
 								i = e.episode || e.e || e.episode_number;
 							if (t && i) {
-								const a = m(n, t, i);
+								const a = u(n, t, i);
 								a && l(e, a);
 							}
 						})
@@ -164,7 +164,7 @@
 					.map((e) => `${e}=${encodeURIComponent(l[e])}`)
 					.join("&");
 			try {
-				let a = u(`${n}lite/events?${c}`),
+				let a = m(`${n}lite/events?${c}`),
 					s = await p(a),
 					o = JSON.parse(s),
 					l = null;
@@ -174,7 +174,7 @@
 						a = Math.ceil(t / i);
 					for (let t = 1; t <= a; t++) {
 						await r(i);
-						const t = u(`${n}lifeevents?memkey=${o.memkey}&${c}`);
+						const t = m(`${n}lifeevents?memkey=${o.memkey}&${c}`);
 						try {
 							let e = await p(t),
 								n = JSON.parse(e);
@@ -187,11 +187,11 @@
 					}
 				} else l = (Array.isArray(o) ? o : o.online || []).find((e) => e.name && e.name.toLowerCase().includes("alloha"));
 				if (!l) return null;
-				let m = u(`${l.url}${l.url.includes("?") ? "&" : "?"}${c}`),
+				let u = m(`${l.url}${l.url.includes("?") ? "&" : "?"}${c}`),
 					d = 0;
 				for (; d < 5; ) {
 					d++;
-					const n = await p(m);
+					const n = await p(u);
 					let a = !1,
 						s = null;
 					if (n.trim().startsWith("{") || n.trim().startsWith("["))
@@ -201,7 +201,7 @@
 					if (a) {
 						if (s.segments) return s.segments;
 						if (s.url && !s.playlist) {
-							m = u(s.url);
+							u = m(s.url);
 							continue;
 						}
 					}
@@ -217,7 +217,7 @@
 						const n = r[e],
 							a = n.getAttribute("s"),
 							s = n.getAttribute("e"),
-							m = l(n.textContent);
+							u = l(n.textContent);
 						if (a && s) {
 							if (a == t && s == i) {
 								o = n;
@@ -229,11 +229,11 @@
 								break;
 							}
 						} else {
-							if (m.includes("сезон") && c(m) == t) {
+							if (u.includes("сезон") && c(u) == t) {
 								o = n;
 								break;
 							}
-							if (m.includes("серия") && c(m) == i) {
+							if (u.includes("серия") && c(u) == i) {
 								o = n;
 								break;
 							}
@@ -249,7 +249,7 @@
 					try {
 						const e = JSON.parse(f);
 						if (!e || !e.url) break;
-						m = u(e.url);
+						u = m(e.url);
 					} catch (e) {
 						break;
 					}
