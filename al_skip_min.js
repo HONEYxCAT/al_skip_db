@@ -24,18 +24,19 @@
 	function c(e, t, i, n) {
 		e &&
 			Array.isArray(e) &&
-			e.forEach((e) => {
-				const a = e.season || e.s || t;
-				(e.episode || e.e || e.episode_number) == i && a == t && r(e, n);
+			e.forEach((e, a) => {
+				const o = e.season || e.s || t,
+					s = e.episode || e.e || e.episode_number || a + 1;
+				parseInt(s) === parseInt(i) && parseInt(o) === parseInt(t) && r(e, n);
 			});
 	}
-	function m(e, t, i) {
+	function p(e, t, i) {
 		if (!e) return null;
 		const n = String(t),
 			a = String(i);
 		return e[n] && e[n][a] ? e[n][a] : ("1" === n && "1" === a && e.movie) || e.movie ? e.movie : null;
 	}
-	function p(e) {
+	function m(e) {
 		let t = Lampa.Storage.get("lampac_unic_id", ""),
 			i = Lampa.Storage.get("account_email", "");
 		t || ((t = Lampa.Utils.uid(8).toLowerCase()), Lampa.Storage.set("lampac_unic_id", t));
@@ -58,11 +59,23 @@
 			e && (u = e.movie || e.card);
 		}
 		if (!u) return;
-		const k = u.kinopoisk_id || ("kinopoisk" === u.source ? u.id : null) || u.kp_id;
-		let g = t.episode || t.e || t.episode_number || 1,
-			f = t.season || t.s || 1;
-		const S = u.number_of_seasons > 0 || (u.original_name && !u.original_title);
-		if ((S || ((f = 1), (g = 1)), l(`Start search for: ${u.title} (S${f} E${g})`), console.log("[UltimateSkip DEBUG] Card Data:", u), console.log("[UltimateSkip DEBUG] Search Params:", { kpId: k, currentSeason: f, currentEpisode: g, isSerial: S }), k)) {
+		const k = u.kinopoisk_id || ("kinopoisk" === u.source ? u.id : null) || u.kp_id,
+			f = (function (e, t = 1) {
+				if (e.episode || e.e || e.episode_number) return { season: parseInt(e.season || e.s || t), episode: parseInt(e.episode || e.e || e.episode_number) };
+				if (e.playlist && Array.isArray(e.playlist)) {
+					const i = e.url,
+						n = e.playlist.findIndex((e) => e.url && e.url === i);
+					if (-1 !== n) {
+						const i = e.playlist[n];
+						return { season: parseInt(i.season || i.s || t), episode: n + 1 };
+					}
+				}
+				return { season: t, episode: 1 };
+			})(t, 1);
+		let g = f.episode,
+			S = f.season;
+		const U = u.number_of_seasons > 0 || (u.original_name && !u.original_title);
+		if ((U || ((S = 1), (g = 1)), l(`Start search for: ${u.title} (S${S} E${g}) [Method: ${f.method || "calculated"}]`), console.log("[UltimateSkip DEBUG] Card Data:", u), console.log("[UltimateSkip DEBUG] Search Params:", { kpId: k, currentSeason: S, currentEpisode: g, isSerial: U }), k)) {
 			const i = await (async function (t) {
 				try {
 					const i = `${e}${t}.json`,
@@ -74,17 +87,17 @@
 			})(k);
 			if (i) {
 				l(`[Success] Found in GitHub DB (KP: ${k})`);
-				const e = m(i, f, g);
+				const e = p(i, S, g);
 				return (
 					e && (r(t, e), Lampa.Noty.show("Таймкоды загружены (GitHub)")),
 					void (
 						t.playlist &&
 						Array.isArray(t.playlist) &&
 						t.playlist.forEach((e) => {
-							let t = e.season || e.s || f,
+							let t = e.season || e.s || S,
 								n = e.episode || e.e || e.episode_number;
 							if (t && n) {
-								const a = m(i, t, n);
+								const a = p(i, t, n);
 								a && r(e, a);
 							}
 						})
@@ -93,13 +106,13 @@
 			}
 		}
 		l("GitHub failed, checking for Anime criteria...");
-		const U = (u.original_language || "").toLowerCase(),
-			h = "ja" === U || "zh" === U || "cn" === U,
-			y = u.genres && u.genres.some((e) => 16 === e.id || (e.name && "animation" === e.name.toLowerCase()));
-		if (h || y) {
+		const h = (u.original_language || "").toLowerCase(),
+			y = "ja" === h || "zh" === h || "cn" === h,
+			E = u.genres && u.genres.some((e) => 16 === e.id || (e.name && "animation" === e.name.toLowerCase()));
+		if (y || E) {
 			l("Anime criteria matched. Trying AniSkip...");
-			const e = (E = u.original_name || u.original_title || u.name)
-					? E.replace(/\(\d{4}\)/g, "")
+			const e = (_ = u.original_name || u.original_title || u.name)
+					? _.replace(/\(\d{4}\)/g, "")
 							.replace(/\(TV\)/gi, "")
 							.replace(/Season \d+/gi, "")
 							.replace(/Part \d+/gi, "")
@@ -128,7 +141,7 @@
 					} catch (e) {
 						return (l("Jikan Error: " + e.message), console.log("[UltimateSkip DEBUG] Jikan Exception:", e), null);
 					}
-				})(e, f, i);
+				})(e, S, i);
 			if (s) {
 				const e = await (async function (e, t) {
 						const i = o.map((e) => "types=" + e);
@@ -160,13 +173,13 @@
 							t
 						);
 					})(e);
-				if (i.length > 0) return (l("[Success] Found in AniSkip"), r(t, i), c(t.playlist, f, g, i), Lampa.Noty.show("Таймкоды загружены (AniSkip)"), void (window.Lampa.Player.listener && window.Lampa.Player.listener.send("segments", { skip: t.segments.skip })));
+				if (i.length > 0) return (l("[Success] Found in AniSkip"), r(t, i), c(t.playlist, S, g, i), Lampa.Noty.show("Таймкоды загружены (AniSkip)"), void (window.Lampa.Player.listener && window.Lampa.Player.listener.send("segments", { skip: t.segments.skip })));
 				l("AniSkip returned no segments.");
 			} else l("Jikan ID not found.");
 		} else l("Not an Anime (Language/Genre mismatch). Skipping AniSkip.");
-		var E;
+		var _;
 		l("AniSkip failed, trying Skaz...");
-		const _ = await (async function (e, t, n) {
+		const b = await (async function (e, t, n) {
 			console.log("[UltimateSkip DEBUG] Starting Skaz Search...");
 			const a = e.title || e.name,
 				o = e.original_title || e.original_name,
@@ -177,7 +190,7 @@
 				.map((e) => `${e}=${encodeURIComponent(r[e])}`)
 				.join("&");
 			try {
-				let e = p(`${i}lite/events?${c}`);
+				let e = m(`${i}lite/events?${c}`);
 				console.log("[UltimateSkip DEBUG] Skaz Init URL:", e);
 				let a = await d(e),
 					o = JSON.parse(a);
@@ -190,7 +203,7 @@
 						n = Math.ceil(e / t);
 					for (let e = 1; e <= n; e++) {
 						await s(t);
-						const e = p(`${i}lifeevents?memkey=${o.memkey}&${c}`);
+						const e = m(`${i}lifeevents?memkey=${o.memkey}&${c}`);
 						try {
 							let t = await d(e),
 								i = JSON.parse(t);
@@ -204,10 +217,10 @@
 				} else l = (Array.isArray(o) ? o : o.online || []).find((e) => e.name && e.name.toLowerCase().includes("alloha"));
 				if (!l) return (console.log("[UltimateSkip DEBUG] Alloha source NOT found in Skaz response."), null);
 				console.log("[UltimateSkip DEBUG] Alloha Data Found:", l);
-				let r = p(`${l.url}${l.url.includes("?") ? "&" : "?"}${c}`),
-					m = 0;
-				for (; m < 5; ) {
-					(m++, console.log(`[UltimateSkip DEBUG] Step ${m}, URL: ${r}`));
+				let r = m(`${l.url}${l.url.includes("?") ? "&" : "?"}${c}`),
+					p = 0;
+				for (; p < 5; ) {
+					(p++, console.log(`[UltimateSkip DEBUG] Step ${p}, URL: ${r}`));
 					const e = await d(r);
 					let i = !1,
 						a = null;
@@ -218,7 +231,7 @@
 					if (i) {
 						if (a.segments) return (console.log("[UltimateSkip DEBUG] JSON contains segments!", a.segments), a.segments);
 						if (a.url && !a.playlist) {
-							(console.log("[UltimateSkip DEBUG] JSON redirect to:", a.url), (r = p(a.url)));
+							(console.log("[UltimateSkip DEBUG] JSON redirect to:", a.url), (r = m(a.url)));
 							continue;
 						}
 					}
@@ -237,8 +250,8 @@
 						const i = o[e],
 							a = i.getAttribute("s"),
 							r = i.getAttribute("e"),
-							m = l(i.textContent);
-						if ((console.log(`[UltimateSkip DEBUG] Item ${e}: text="${m}", s="${a}", e="${r}"`), a && r)) {
+							p = l(i.textContent);
+						if ((console.log(`[UltimateSkip DEBUG] Item ${e}: text="${p}", s="${a}", e="${r}"`), a && r)) {
 							if (a == t && r == n) {
 								(console.log("[UltimateSkip DEBUG] Match found by attributes s/e!"), (s = i));
 								break;
@@ -249,11 +262,11 @@
 								break;
 							}
 						} else {
-							if (m.includes("сезон") && c(m) == t) {
+							if (p.includes("сезон") && c(p) == t) {
 								(console.log("[UltimateSkip DEBUG] Match found by text 'сезон'!"), (s = i));
 								break;
 							}
-							if (m.includes("серия") && c(m) == n) {
+							if (p.includes("серия") && c(p) == n) {
 								(console.log("[UltimateSkip DEBUG] Match found by text 'серия'!"), (s = i));
 								break;
 							}
@@ -279,7 +292,7 @@
 							console.log("[UltimateSkip DEBUG] data-json found but no URL.");
 							break;
 						}
-						(console.log("[UltimateSkip DEBUG] Found data-json URL:", e.url), (r = p(e.url)));
+						(console.log("[UltimateSkip DEBUG] Found data-json URL:", e.url), (r = m(e.url)));
 					} catch (e) {
 						console.log("[UltimateSkip DEBUG] Error parsing data-json:", e);
 						break;
@@ -289,12 +302,12 @@
 				console.log("[UltimateSkip DEBUG] Skaz Error:", e);
 			}
 			return null;
-		})(u, f, g);
-		if (_) {
-			const e = (b = _) && b.skip && Array.isArray(b.skip) ? b.skip.filter((e) => null != e.start && null != e.end).map((e) => ({ start: e.start, end: e.end, name: "Пропустить" })) : [];
-			if (e.length > 0) return (l("[Success] Found in Skaz"), r(t, e), c(t.playlist, f, g, e), void Lampa.Noty.show("Таймкоды загружены (Skaz)"));
+		})(u, S, g);
+		if (b) {
+			const e = (w = b) && w.skip && Array.isArray(w.skip) ? w.skip.filter((e) => null != e.start && null != e.end).map((e) => ({ start: e.start, end: e.end, name: "Пропустить" })) : [];
+			if (e.length > 0) return (l("[Success] Found in Skaz"), r(t, e), c(t.playlist, S, g, e), void Lampa.Noty.show("Таймкоды загружены (Skaz)"));
 		}
-		var b;
+		var w;
 	}
 	function k() {
 		if (window.lampa_ultimate_skip) return;
