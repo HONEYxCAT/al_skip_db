@@ -1,2089 +1,2073 @@
 <!doctype html>
 <html lang="ru">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Aniskip</title>
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Aniskip</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-	<link
-		href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
-		rel="stylesheet" />
+		<style>
+			:root {
+				--background: #09090b;
+				--background-secondary: #0c0c0f;
+				--foreground: #fafafa;
 
-	<style>
-		:root {
-			--background: #09090b;
-			--background-secondary: #0c0c0f;
-			--foreground: #fafafa;
+				--card: #0f0f12;
+				--card-foreground: #fafafa;
 
-			--card: #0f0f12;
-			--card-foreground: #fafafa;
+				--popover: #111114;
+				--popover-foreground: #fafafa;
 
-			--popover: #111114;
-			--popover-foreground: #fafafa;
+				--primary: #fafafa;
+				--primary-foreground: #18181b;
 
-			--primary: #fafafa;
-			--primary-foreground: #18181b;
+				--secondary: #1c1c1f;
+				--secondary-foreground: #fafafa;
 
-			--secondary: #1c1c1f;
-			--secondary-foreground: #fafafa;
+				--muted: #1f1f23;
+				--muted-foreground: #71717a;
 
-			--muted: #1f1f23;
-			--muted-foreground: #71717a;
+				--accent: #1c1c21;
+				--accent-foreground: #fafafa;
 
-			--accent: #1c1c21;
-			--accent-foreground: #fafafa;
+				--destructive: #dc2626;
+				--destructive-foreground: #fafafa;
 
-			--destructive: #dc2626;
-			--destructive-foreground: #fafafa;
+				--success: #22c55e;
+				--success-muted: rgba(34, 197, 94, 0.12);
 
-			--success: #22c55e;
-			--success-muted: rgba(34, 197, 94, 0.12);
+				--warning: #f59e0b;
+				--warning-muted: rgba(245, 158, 11, 0.12);
 
-			--warning: #f59e0b;
-			--warning-muted: rgba(245, 158, 11, 0.12);
+				--border: #27272a;
+				--border-subtle: #1f1f23;
+				--input: #1a1a1d;
+				--ring: #52525b;
+				--ring-primary: #a1a1aa;
 
-			--border: #27272a;
-			--border-subtle: #1f1f23;
-			--input: #1a1a1d;
-			--ring: #52525b;
-			--ring-primary: #a1a1aa;
+				--radius: 0.625rem;
 
-			--radius: 0.625rem;
+				--sh-key: #9cdcfe;
+				--sh-string: #ce9178;
+				--sh-number: #b5cea8;
+				--sh-boolean: #569cd6;
+				--sh-null: #569cd6;
 
-			--sh-key: #9cdcfe;
-			--sh-string: #ce9178;
-			--sh-number: #b5cea8;
-			--sh-boolean: #569cd6;
-			--sh-null: #569cd6;
-
-			--gradient-primary: linear-gradient(135deg, #fafafa 0%, #d4d4d8 100%);
-			--gradient-subtle: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
-			--gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(250, 250, 250, 0.08) 0%, transparent 60%);
-		}
-
-		* {
-			box-sizing: border-box;
-		}
-
-		@media (max-width: 600px) {
-
-			*,
-			*::before,
-			*::after {
-				-webkit-user-select: none;
-				-moz-user-select: none;
-				-ms-user-select: none;
-				user-select: none;
-				-webkit-touch-callout: none;
+				--gradient-primary: linear-gradient(135deg, #fafafa 0%, #d4d4d8 100%);
+				--gradient-subtle: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+				--gradient-glow: radial-gradient(ellipse at 50% 0%, rgba(250, 250, 250, 0.08) 0%, transparent 60%);
 			}
 
-			input,
-			textarea {
-				-webkit-user-select: text;
-				-moz-user-select: text;
-				-ms-user-select: text;
-				user-select: text;
-			}
-		}
-
-		html {
-			scroll-behavior: smooth;
-		}
-
-		::-webkit-scrollbar {
-			width: 6px;
-			height: 6px;
-		}
-
-		::-webkit-scrollbar-track {
-			background: transparent;
-		}
-
-		::-webkit-scrollbar-thumb {
-			background: var(--border);
-			border-radius: 3px;
-		}
-
-		::-webkit-scrollbar-thumb:hover {
-			background: var(--muted-foreground);
-		}
-
-		::-webkit-scrollbar-corner {
-			background: transparent;
-		}
-
-		body {
-			background-color: var(--background);
-			background-image: var(--gradient-glow);
-			color: var(--foreground);
-			font-family:
-				"Inter",
-				-apple-system,
-				BlinkMacSystemFont,
-				sans-serif;
-			margin: 0;
-			padding: 0;
-			height: 100vh;
-			display: flex;
-			justify-content: center;
-			overflow: hidden;
-			font-size: 0.875rem;
-			line-height: 1.5;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;
-		}
-
-		.layout {
-			display: grid;
-			grid-template-columns: 340px 1fr;
-			width: 100%;
-			max-width: 1600px;
-			height: 100vh;
-		}
-
-		.sidebar {
-			border-right: 1px solid var(--border-subtle);
-			padding: 1.75rem 1.5rem;
-			display: flex;
-			flex-direction: column;
-			gap: 1.25rem;
-			overflow-y: auto;
-			background: var(--background);
-			background-image: var(--gradient-subtle);
-			position: relative;
-		}
-
-		.sidebar::before {
-			content: "";
-			position: absolute;
-			top: 0;
-			right: 0;
-			width: 1px;
-			height: 100%;
-			background: linear-gradient(180deg, transparent 0%, var(--border) 20%, var(--border) 80%, transparent 100%);
-		}
-
-		.main-content {
-			padding: 1.75rem 2rem;
-			display: flex;
-			flex-direction: column;
-			gap: 1.25rem;
-			overflow-y: auto;
-			background: var(--background-secondary);
-			position: relative;
-		}
-
-		.sheet-handle {
-			display: none;
-		}
-
-		h2 {
-			font-size: 1.125rem;
-			font-weight: 600;
-			letter-spacing: -0.02em;
-			margin: 0 0 0.125rem 0;
-			color: var(--foreground);
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-		}
-
-		h2::before {
-			content: "";
-			width: 3px;
-			height: 1em;
-			background: var(--gradient-primary);
-			border-radius: 2px;
-		}
-
-		.section-title {
-			font-size: 0.8125rem;
-			font-weight: 600;
-			color: var(--muted-foreground);
-			text-transform: uppercase;
-			letter-spacing: 0.05em;
-			margin-bottom: 0.875rem;
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-		}
-
-		p.hint {
-			font-size: 0.75rem;
-			color: var(--muted-foreground);
-			margin: 0.375rem 0 0 0;
-			line-height: 1.4;
-		}
-
-		.form-section {
-			background: var(--card);
-			border: 1px solid var(--border-subtle);
-			border-radius: var(--radius);
-			padding: 1rem 1.25rem;
-			margin-bottom: 0.75rem;
-		}
-
-		.form-group {
-			margin-bottom: 1rem;
-		}
-
-		.form-group:last-child {
-			margin-bottom: 0;
-		}
-
-		label {
-			display: block;
-			font-size: 0.8125rem;
-			font-weight: 500;
-			margin-bottom: 0.5rem;
-			color: var(--foreground);
-			letter-spacing: -0.01em;
-		}
-
-		input[type="text"],
-		input[type="number"] {
-			height: 2.375rem;
-			width: 100%;
-			border-radius: var(--radius);
-			border: 1px solid var(--border-subtle);
-			background-color: var(--input);
-			padding: 0 0.875rem;
-			font-size: 0.875rem;
-			color: var(--foreground);
-			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-			font-family: inherit;
-		}
-
-		input[type="text"]:hover,
-		input[type="number"]:hover {
-			border-color: var(--border);
-			background-color: var(--secondary);
-		}
-
-		input:focus {
-			outline: none;
-			border-color: var(--ring-primary);
-			background-color: var(--secondary);
-			box-shadow: 0 0 0 3px rgba(161, 161, 170, 0.15);
-		}
-
-		input::placeholder {
-			color: var(--muted-foreground);
-			opacity: 0.6;
-		}
-
-		.checkbox-grid {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 0.625rem;
-		}
-
-		.checkbox-full-width {
-			grid-column: 1 / -1;
-		}
-
-		.checkbox-wrapper {
-			display: flex;
-			align-items: center;
-			gap: 0.625rem;
-			cursor: pointer;
-			user-select: none;
-			padding: 0.5rem 0.625rem;
-			border-radius: calc(var(--radius) - 2px);
-			transition: all 0.15s ease;
-			background: transparent;
-			border: 1px solid var(--border-subtle);
-		}
-
-		.checkbox-wrapper:hover {
-			background: var(--accent);
-		}
-
-		.checkbox-wrapper input {
-			display: none;
-		}
-
-		.custom-checkbox {
-			width: 1.125rem;
-			height: 1.125rem;
-			border: 1.5px solid var(--ring);
-			border-radius: 5px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-			background: transparent;
-			flex-shrink: 0;
-		}
-
-		.checkbox-wrapper input:checked+.custom-checkbox {
-			background: var(--foreground);
-			border-color: var(--foreground);
-			color: var(--background);
-		}
-
-		.checkbox-wrapper:hover .custom-checkbox {
-			border-color: var(--foreground);
-		}
-
-		.custom-checkbox svg {
-			width: 12px;
-			height: 12px;
-			display: none;
-			stroke-width: 3;
-		}
-
-		.checkbox-wrapper input:checked+.custom-checkbox svg {
-			display: block;
-			animation: checkmark 0.2s ease-out;
-		}
-
-		@keyframes checkmark {
-			from {
-				opacity: 0;
+			* {
+				box-sizing: border-box;
 			}
 
-			to {
-				opacity: 1;
-			}
-		}
+			@media (max-width: 600px) {
+				*,
+				*::before,
+				*::after {
+					-webkit-user-select: none;
+					-moz-user-select: none;
+					-ms-user-select: none;
+					user-select: none;
+					-webkit-touch-callout: none;
+				}
 
-		.checkbox-label {
-			font-size: 0.8125rem;
-			font-weight: 500;
-			color: var(--foreground);
-			letter-spacing: -0.01em;
-		}
-
-		.btn {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			white-space: nowrap;
-			border-radius: var(--radius);
-			font-size: 0.8125rem;
-			font-weight: 500;
-			height: 2.375rem;
-			padding: 0 1.125rem;
-			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-			cursor: pointer;
-			width: 100%;
-			border: 1px solid transparent;
-			letter-spacing: -0.01em;
-			position: relative;
-			overflow: hidden;
-		}
-
-		.btn::before {
-			content: "";
-			position: absolute;
-			inset: 0;
-			background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
-			opacity: 0;
-			transition: opacity 0.2s;
-		}
-
-		.btn:hover::before {
-			opacity: 1;
-		}
-
-		.btn-primary {
-			background: var(--foreground);
-			color: var(--background);
-			box-shadow:
-				0 1px 2px rgba(0, 0, 0, 0.2),
-				0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-		}
-
-		.btn-primary:hover {
-			background: #e4e4e7;
-
-			box-shadow:
-				0 4px 12px rgba(0, 0, 0, 0.3),
-				0 0 0 1px rgba(255, 255, 255, 0.15) inset;
-		}
-
-		.btn-outline {
-			background-color: transparent;
-			border-color: var(--border);
-			color: var(--foreground);
-		}
-
-		.btn-outline:hover {
-			background-color: var(--accent);
-			border-color: var(--ring);
-		}
-
-		.btn-icon {
-			width: 2.375rem;
-			padding: 0;
-			flex-shrink: 0;
-		}
-
-		.btn-icon svg {
-			transition: transform 0.2s ease;
-		}
-
-		.btn-icon:hover svg {
-			transform: scale(1.1);
-		}
-
-		.search-results {
-			position: absolute;
-			z-index: 50;
-			width: 100%;
-
-			background: var(--popover);
-			border: 1px solid var(--border);
-			border-radius: var(--radius);
-			box-shadow:
-				0 10px 40px -10px rgba(0, 0, 0, 0.5),
-				0 0 0 1px rgba(255, 255, 255, 0.05) inset;
-			margin-top: 6px;
-			overflow: hidden;
-			display: none;
-			backdrop-filter: blur(12px);
-			-webkit-backdrop-filter: blur(12px);
-		}
-
-		.search-results-content {
-			max-height: 280px;
-			overflow-y: auto;
-		}
-
-		.search-results.active {
-			display: block;
-			animation: slideDown 0.2s ease-out;
-		}
-
-		@keyframes slideDown {
-			from {
-				opacity: 0;
+				input,
+				textarea {
+					-webkit-user-select: text;
+					-moz-user-select: text;
+					-ms-user-select: text;
+					user-select: text;
+				}
 			}
 
-			to {
-				opacity: 1;
-			}
-		}
-
-		.search-item {
-			padding: 0.75rem 1rem;
-			display: flex;
-			gap: 0.875rem;
-			align-items: center;
-			cursor: pointer;
-			transition: all 0.15s ease;
-			border-bottom: 1px solid var(--border-subtle);
-		}
-
-		.search-item:last-child {
-			border-bottom: none;
-		}
-
-		.search-item:hover {
-			background: var(--accent);
-		}
-
-		.search-item img {
-			width: 36px;
-			height: 52px;
-			object-fit: cover;
-			border-radius: 6px;
-			background: var(--muted);
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-		}
-
-		.search-text b {
-			display: block;
-			font-size: 0.8125rem;
-			font-weight: 500;
-			color: var(--foreground);
-			margin-bottom: 0.25rem;
-			line-height: 1.3;
-		}
-
-		.search-text span {
-			font-size: 0.75rem;
-			color: var(--muted-foreground);
-			font-family: "JetBrains Mono", monospace;
-			letter-spacing: -0.02em;
-		}
-
-		.output-header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			padding-bottom: 1.25rem;
-			border-bottom: 1px solid var(--border-subtle);
-			margin-bottom: 1rem;
-		}
-
-		.season-grid {
-			display: grid;
-			grid-template-columns: repeat(auto-fill, minmax(3.25rem, 1fr));
-			gap: 0.5rem;
-			margin-bottom: 1.25rem;
-		}
-
-		.ep-badge {
-			height: 2.25rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			border-radius: calc(var(--radius) - 2px);
-			border: 1px solid var(--border-subtle);
-			background: var(--card);
-			color: var(--muted-foreground);
-			font-size: 0.8125rem;
-			font-weight: 500;
-			cursor: pointer;
-			transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-			font-family: "JetBrains Mono", monospace;
-		}
-
-		.ep-badge:hover {
-			border-color: var(--ring);
-			color: var(--foreground);
-			background: var(--accent);
-
-			box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-		}
-
-		.ep-badge.found {
-			border-color: rgba(34, 197, 94, 0.3);
-			color: #4ade80;
-			background: var(--success-muted);
-		}
-
-		.ep-badge.found:hover {
-			background: rgba(34, 197, 94, 0.2);
-			border-color: rgba(34, 197, 94, 0.5);
-		}
-
-		.ep-badge.missing {
-			border-color: rgba(239, 68, 68, 0.3);
-			color: #f87171;
-			background: rgba(239, 68, 68, 0.08);
-		}
-
-		.ep-badge.missing:hover {
-			background: rgba(239, 68, 68, 0.15);
-			border-color: rgba(239, 68, 68, 0.5);
-		}
-
-		.ep-badge.active {
-			box-shadow:
-				0 0 0 2px var(--background-secondary),
-				0 0 0 4px var(--ring-primary),
-				0 4px 12px rgba(0, 0, 0, 0.2);
-		}
-
-		.code-container {
-			background: var(--background);
-			border: 1px solid var(--border-subtle);
-			border-radius: var(--radius);
-			position: relative;
-			flex: 1;
-			overflow: hidden;
-			display: flex;
-			flex-direction: column;
-			box-shadow:
-				0 0 0 1px rgba(255, 255, 255, 0.02) inset,
-				0 2px 8px rgba(0, 0, 0, 0.1);
-		}
-
-		.code-actions {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			padding: 0.625rem 1rem;
-			border-bottom: 1px solid var(--border-subtle);
-			background: rgba(255, 255, 255, 0.015);
-		}
-
-		.code-actions span {
-			font-family: "JetBrains Mono", monospace;
-			font-size: 0.75rem;
-			color: var(--muted-foreground);
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-		}
-
-		.code-actions span::before {
-			content: "";
-			width: 8px;
-			height: 8px;
-			border-radius: 50%;
-			background: var(--success);
-			animation: pulse 2s ease-in-out infinite;
-		}
-
-		@keyframes pulse {
-
-			0%,
-			100% {
-				opacity: 0.4;
+			html {
+				scroll-behavior: smooth;
 			}
 
-			50% {
-				opacity: 1;
+			::-webkit-scrollbar {
+				width: 6px;
+				height: 6px;
 			}
-		}
 
-		.code-scroll {
-			padding: 0.5rem;
-			overflow: auto;
-			flex: 1;
-			font-family: "JetBrains Mono", monospace;
-			font-size: 0.8125rem;
-			line-height: 1.6;
-			color: #d4d4d8;
-		}
-
-		.code-scroll pre {
-			margin: 0;
-			white-space: pre-wrap;
-			word-break: break-word;
-		}
-
-		.sh-key {
-			color: var(--sh-key);
-		}
-
-		.sh-str {
-			color: var(--sh-string);
-		}
-
-		.sh-num {
-			color: var(--sh-number);
-		}
-
-		.sh-bool {
-			color: var(--sh-boolean);
-		}
-
-		.sh-null {
-			color: var(--sh-null);
-		}
-
-		.separator {
-			height: 0;
-			border-top: 1px solid var(--border);
-			margin: 1rem 0;
-		}
-
-		.grid-2 {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 0.625rem;
-		}
-
-		.spinner {
-			width: 16px;
-			height: 16px;
-			border: 2px solid var(--border);
-			border-top-color: var(--foreground);
-			border-radius: 50%;
-			animation: spin 0.7s linear infinite;
-		}
-
-		@keyframes spin {
-			to {
-				transform: rotate(360deg);
+			::-webkit-scrollbar-track {
+				background: transparent;
 			}
-		}
 
-		.empty-state {
-			height: 100%;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			color: var(--muted-foreground);
-			gap: 0.75rem;
-			text-align: center;
-			padding: 2rem;
-		}
+			::-webkit-scrollbar-thumb {
+				background: var(--border);
+				border-radius: 3px;
+			}
 
-		.empty-state svg {
-			width: 48px;
-			height: 48px;
-			opacity: 0.3;
-		}
+			::-webkit-scrollbar-thumb:hover {
+				background: var(--muted-foreground);
+			}
 
-		.empty-state p {
-			font-size: 0.875rem;
-			margin: 0;
-		}
+			::-webkit-scrollbar-corner {
+				background: transparent;
+			}
 
-		.footer {
-			font-size: 0.6875rem;
-			color: var(--muted-foreground);
-			text-align: center;
-			padding: 1rem 0 0.5rem;
-			border-top: 1px solid var(--border-subtle);
-			margin-top: auto;
-			opacity: 0.7;
-		}
-
-		.footer span {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.375rem;
-		}
-
-		@media (max-width: 900px) {
 			body {
-				font-size: 0.8125rem;
+				background-color: var(--background);
+				background-image: var(--gradient-glow);
+				color: var(--foreground);
+				font-family:
+					"Inter",
+					-apple-system,
+					BlinkMacSystemFont,
+					sans-serif;
+				margin: 0;
+				padding: 0;
+				height: 100vh;
+				display: flex;
+				justify-content: center;
+				overflow: hidden;
+				font-size: 0.875rem;
+				line-height: 1.5;
+				-webkit-font-smoothing: antialiased;
+				-moz-osx-font-smoothing: grayscale;
 			}
 
 			.layout {
-				grid-template-rows: auto 1fr;
+				display: grid;
+				grid-template-columns: 340px 1fr;
+				width: 100%;
+				max-width: 1600px;
 				height: 100vh;
-				height: 100dvh;
 			}
 
 			.sidebar {
-				padding: 1rem;
-				gap: 1rem;
-				max-height: 40vh;
+				border-right: 1px solid var(--border-subtle);
+				padding: 1.75rem 1.5rem;
+				display: flex;
+				flex-direction: column;
+				gap: 1.25rem;
+				overflow-y: auto;
+				background: var(--background);
+				background-image: var(--gradient-subtle);
+				position: relative;
+			}
+
+			.sidebar::before {
+				content: "";
+				position: absolute;
+				top: 0;
+				right: 0;
+				width: 1px;
+				height: 100%;
+				background: linear-gradient(180deg, transparent 0%, var(--border) 20%, var(--border) 80%, transparent 100%);
 			}
 
 			.main-content {
-				padding: 1rem 0.75rem;
-				gap: 1rem;
-				min-height: 0;
-			}
-
-			.output-header {
-				padding-bottom: 0.875rem;
-				margin-bottom: 0.75rem;
-				flex-wrap: wrap;
-				gap: 0.5rem;
-			}
-
-			.output-header h2 {
-				font-size: 1rem;
-			}
-
-			.season-grid {
+				padding: 1.75rem 2rem;
 				display: flex;
-				flex-wrap: nowrap;
-				gap: 0.375rem;
-				min-height: 3rem;
-				max-height: 3rem;
-				overflow-x: auto;
-				overflow-y: hidden;
-				padding: 0.5rem;
-				margin-bottom: 0.75rem;
-				background: var(--background);
-				border-radius: var(--radius);
-				border: 1px solid var(--border-subtle);
-				-webkit-overflow-scrolling: touch;
-				align-items: center;
+				flex-direction: column;
+				gap: 1.25rem;
+				overflow-y: auto;
+				background: var(--background-secondary);
+				position: relative;
 			}
 
-			.ep-badge {
-				height: 2rem;
-				min-width: 2.5rem;
-				flex-shrink: 0;
-				font-size: 0.75rem;
-			}
-
-			.code-container {
-				flex: 1;
-				min-height: 200px;
-			}
-
-			.code-scroll {
-				padding: 0.875rem;
-				font-size: 0.75rem;
-			}
-
-			.code-actions {
-				padding: 0.5rem 0.75rem;
-			}
-
-			.code-actions span {
-				font-size: 0.6875rem;
-			}
-
-			.form-section {
-				padding: 0.875rem;
+			.sheet-handle {
+				display: none;
 			}
 
 			h2 {
-				font-size: 1rem;
+				font-size: 1.125rem;
+				font-weight: 600;
+				letter-spacing: -0.02em;
+				margin: 0 0 0.125rem 0;
+				color: var(--foreground);
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+
+			h2::before {
+				content: "";
+				width: 3px;
+				height: 1em;
+				background: var(--gradient-primary);
+				border-radius: 2px;
 			}
 
 			.section-title {
+				font-size: 0.8125rem;
+				font-weight: 600;
+				color: var(--muted-foreground);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				margin-bottom: 0.875rem;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+
+			p.hint {
 				font-size: 0.75rem;
-				margin-bottom: 0.625rem;
+				color: var(--muted-foreground);
+				margin: 0.375rem 0 0 0;
+				line-height: 1.4;
+			}
+
+			.form-section {
+				background: var(--card);
+				border: 1px solid var(--border-subtle);
+				border-radius: var(--radius);
+				padding: 1rem 1.25rem;
+				margin-bottom: 0.75rem;
+			}
+
+			.form-group {
+				margin-bottom: 1rem;
+			}
+
+			.form-group:last-child {
+				margin-bottom: 0;
 			}
 
 			label {
-				font-size: 0.75rem;
+				display: block;
+				font-size: 0.8125rem;
+				font-weight: 500;
+				margin-bottom: 0.5rem;
+				color: var(--foreground);
+				letter-spacing: -0.01em;
 			}
 
 			input[type="text"],
 			input[type="number"] {
-				height: 2.625rem;
-				font-size: 1rem;
-				padding: 0 0.75rem;
+				height: 2.375rem;
+				width: 100%;
+				border-radius: var(--radius);
+				border: 1px solid var(--border-subtle);
+				background-color: var(--input);
+				padding: 0 0.875rem;
+				font-size: 0.875rem;
+				color: var(--foreground);
+				transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+				font-family: inherit;
+			}
+
+			input[type="text"]:hover,
+			input[type="number"]:hover {
+				border-color: var(--border);
+				background-color: var(--secondary);
+			}
+
+			input:focus {
+				outline: none;
+				border-color: var(--ring-primary);
+				background-color: var(--secondary);
+				box-shadow: 0 0 0 3px rgba(161, 161, 170, 0.15);
+			}
+
+			input::placeholder {
+				color: var(--muted-foreground);
+				opacity: 0.6;
 			}
 
 			.checkbox-grid {
+				display: grid;
 				grid-template-columns: 1fr 1fr;
-				gap: 0.5rem;
-			}
-
-			.checkbox-wrapper {
-				padding: 0.625rem 0.5rem;
-			}
-
-			.custom-checkbox {
-				width: 1.25rem;
-				height: 1.25rem;
-			}
-
-			.checkbox-label {
-				font-size: 0.75rem;
-			}
-
-			.btn {
-				height: 2.625rem;
-				font-size: 0.875rem;
-			}
-
-			.btn-icon {
-				width: 2.625rem;
-			}
-
-			.grid-2 {
-				gap: 0.5rem;
-			}
-
-			.search-results {
-				max-height: 50vh;
-			}
-
-			.search-results-content {
-				max-height: 45vh;
-			}
-
-			.search-item {
-				padding: 0.625rem 0.75rem;
-			}
-
-			.search-item img {
-				width: 32px;
-				height: 46px;
-			}
-
-			.search-text b {
-				font-size: 0.75rem;
-			}
-
-			.search-text span {
-				font-size: 0.6875rem;
-			}
-
-			.tabs {
-				flex-wrap: nowrap;
-				gap: 0;
-			}
-
-			.tab {
-				padding: 0.625rem 0.75rem;
-				font-size: 0.75rem;
-				white-space: nowrap;
-				flex-shrink: 0;
-			}
-
-			.skip-editor {
-				padding: 1rem;
-			}
-
-			.skip-editor-title {
-				font-size: 0.8125rem;
-			}
-
-			.duration-display {
-				padding: 0.625rem 0.875rem;
-			}
-
-			.duration-label {
-				font-size: 0.6875rem;
-			}
-
-			.duration-value {
-				font-size: 0.8125rem;
-			}
-
-			.timeline-container {
-				padding: 1rem;
-			}
-
-			.timeline-track {
-				height: 56px;
-			}
-
-			.timeline-handle {
-				width: 20px;
-				height: 40px;
-				touch-action: none;
-			}
-
-			.timeline-handle.start {
-				left: -10px;
-			}
-
-			.timeline-handle.end {
-				right: -10px;
-			}
-
-			.timeline-selection {
-				touch-action: none;
-			}
-
-			.timeline-label {
-				font-size: 0.6875rem;
-			}
-
-			.timeline-value {
-				font-size: 0.8125rem;
-				padding: 0.375rem 0.625rem;
-			}
-
-			.timeline-tick {
-				font-size: 0.5625rem;
-			}
-
-			.time-inputs {
 				gap: 0.625rem;
 			}
 
-			.time-input-group {
-				padding: 0.75rem;
+			.checkbox-full-width {
+				grid-column: 1 / -1;
 			}
 
-			.time-input-label {
-				font-size: 0.625rem;
-				margin-bottom: 0.375rem;
+			.checkbox-wrapper {
+				display: flex;
+				align-items: center;
+				gap: 0.625rem;
+				cursor: pointer;
+				user-select: none;
+				padding: 0.5rem 0.625rem;
+				border-radius: calc(var(--radius) - 2px);
+				transition: all 0.15s ease;
+				background: transparent;
+				border: 1px solid var(--border-subtle);
 			}
 
-			.time-input-fields input {
-				width: 2.75rem;
-				height: 2.25rem;
-				font-size: 1rem;
+			.checkbox-wrapper:hover {
+				background: var(--accent);
 			}
 
-			.time-input-fields span {
-				font-size: 1rem;
+			.checkbox-wrapper input {
+				display: none;
 			}
 
-			.time-input-fields {
-				justify-content: flex-start;
+			.custom-checkbox {
+				width: 1.125rem;
+				height: 1.125rem;
+				border: 1.5px solid var(--ring);
+				border-radius: 5px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+				background: transparent;
+				flex-shrink: 0;
 			}
 
-			.skip-type-selector {
-				display: grid;
-				grid-template-columns: repeat(3, 1fr);
-				gap: 0.375rem;
+			.checkbox-wrapper input:checked + .custom-checkbox {
+				background: var(--foreground);
+				border-color: var(--foreground);
+				color: var(--background);
 			}
 
-			.skip-type-btn {
-				height: 2.5rem;
-				font-size: 0.6875rem;
-				padding: 0 0.375rem;
+			.checkbox-wrapper:hover .custom-checkbox {
+				border-color: var(--foreground);
 			}
 
-			.provider-input label {
-				margin-bottom: 0.375rem;
+			.custom-checkbox svg {
+				width: 12px;
+				height: 12px;
+				display: none;
+				stroke-width: 3;
 			}
 
-			.submit-info {
-				font-size: 0.6875rem;
-				padding: 0.625rem;
+			.checkbox-wrapper input:checked + .custom-checkbox svg {
+				display: block;
+				animation: checkmark 0.2s ease-out;
 			}
 
-			.skip-card {
-				padding: 0.875rem;
+			@keyframes checkmark {
+				from {
+					opacity: 0;
+				}
+
+				to {
+					opacity: 1;
+				}
 			}
 
-			.skip-card-header {
-				flex-direction: column;
-				align-items: flex-start;
-				gap: 0.375rem;
-			}
-
-			.skip-card-type {
-				font-size: 0.6875rem;
-			}
-
-			.skip-card-times {
+			.checkbox-label {
 				font-size: 0.8125rem;
+				font-weight: 500;
+				color: var(--foreground);
+				letter-spacing: -0.01em;
 			}
 
-			.skip-card-meta {
-				font-size: 0.625rem;
+			.btn {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				white-space: nowrap;
+				border-radius: var(--radius);
+				font-size: 0.8125rem;
+				font-weight: 500;
+				height: 2.375rem;
+				padding: 0 1.125rem;
+				transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+				cursor: pointer;
+				width: 100%;
+				border: 1px solid transparent;
+				letter-spacing: -0.01em;
+				position: relative;
+				overflow: hidden;
 			}
 
-			.vote-container {
-				flex-direction: row;
+			.btn::before {
+				content: "";
+				position: absolute;
+				inset: 0;
+				background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+				opacity: 0;
+				transition: opacity 0.2s;
 			}
 
-			.vote-btn {
-				flex: 1;
-				padding: 0.5rem;
-				font-size: 0.6875rem;
+			.btn:hover::before {
+				opacity: 1;
 			}
 
-			.toast {
-				left: 1rem;
-				right: 1rem;
-				bottom: 1rem;
-				text-align: center;
+			.btn-primary {
+				background: var(--foreground);
+				color: var(--background);
+				box-shadow:
+					0 1px 2px rgba(0, 0, 0, 0.2),
+					0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 			}
 
-			.empty-state {
-				padding: 1.5rem;
+			.btn-primary:hover {
+				background: #e4e4e7;
+
+				box-shadow:
+					0 4px 12px rgba(0, 0, 0, 0.3),
+					0 0 0 1px rgba(255, 255, 255, 0.15) inset;
 			}
 
-			.empty-state svg {
+			.btn-outline {
+				background-color: transparent;
+				border-color: var(--border);
+				color: var(--foreground);
+			}
+
+			.btn-outline:hover {
+				background-color: var(--accent);
+				border-color: var(--ring);
+			}
+
+			.btn-icon {
+				width: 2.375rem;
+				padding: 0;
+				flex-shrink: 0;
+			}
+
+			.btn-icon svg {
+				transition: transform 0.2s ease;
+			}
+
+			.btn-icon:hover svg {
+				transform: scale(1.1);
+			}
+
+			.search-results {
+				position: absolute;
+				z-index: 50;
+				width: 100%;
+
+				background: var(--popover);
+				border: 1px solid var(--border);
+				border-radius: var(--radius);
+				box-shadow:
+					0 10px 40px -10px rgba(0, 0, 0, 0.5),
+					0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+				margin-top: 6px;
+				overflow: hidden;
+				display: none;
+				backdrop-filter: blur(12px);
+				-webkit-backdrop-filter: blur(12px);
+			}
+
+			.search-results-content {
+				max-height: 280px;
+				overflow-y: auto;
+			}
+
+			.search-results.active {
+				display: block;
+				animation: slideDown 0.2s ease-out;
+			}
+
+			@keyframes slideDown {
+				from {
+					opacity: 0;
+				}
+
+				to {
+					opacity: 1;
+				}
+			}
+
+			.search-item {
+				padding: 0.75rem 1rem;
+				display: flex;
+				gap: 0.875rem;
+				align-items: center;
+				cursor: pointer;
+				transition: all 0.15s ease;
+				border-bottom: 1px solid var(--border-subtle);
+			}
+
+			.search-item:last-child {
+				border-bottom: none;
+			}
+
+			.search-item:hover {
+				background: var(--accent);
+			}
+
+			.search-item img {
 				width: 36px;
-				height: 36px;
+				height: 52px;
+				object-fit: cover;
+				border-radius: 6px;
+				background: var(--muted);
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 			}
 
-			.empty-state p {
+			.search-text b {
+				display: block;
 				font-size: 0.8125rem;
-			}
-		}
-
-		@media (max-width: 380px) {
-			.sidebar {
-				padding: 0.75rem;
-				max-height: 38vh;
+				font-weight: 500;
+				color: var(--foreground);
+				margin-bottom: 0.25rem;
+				line-height: 1.3;
 			}
 
-			.main-content {
-				padding: 0.75rem 0.5rem;
+			.search-text span {
+				font-size: 0.75rem;
+				color: var(--muted-foreground);
+				font-family: "JetBrains Mono", monospace;
+				letter-spacing: -0.02em;
+			}
+
+			.output-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding-bottom: 1.25rem;
+				border-bottom: 1px solid var(--border-subtle);
+				margin-bottom: 1rem;
 			}
 
 			.season-grid {
-				gap: 0.25rem;
-				padding: 0.375rem;
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(3.25rem, 1fr));
+				gap: 0.5rem;
+				margin-bottom: 1.25rem;
 			}
 
 			.ep-badge {
-				min-width: 2.25rem;
-				height: 1.75rem;
+				height: 2.25rem;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				border-radius: calc(var(--radius) - 2px);
+				border: 1px solid var(--border-subtle);
+				background: var(--card);
+				color: var(--muted-foreground);
+				font-size: 0.8125rem;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+				font-family: "JetBrains Mono", monospace;
+			}
+
+			.ep-badge:hover {
+				border-color: var(--ring);
+				color: var(--foreground);
+				background: var(--accent);
+
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+			}
+
+			.ep-badge.found {
+				border-color: rgba(34, 197, 94, 0.3);
+				color: #4ade80;
+				background: var(--success-muted);
+			}
+
+			.ep-badge.found:hover {
+				background: rgba(34, 197, 94, 0.2);
+				border-color: rgba(34, 197, 94, 0.5);
+			}
+
+			.ep-badge.missing {
+				border-color: rgba(239, 68, 68, 0.3);
+				color: #f87171;
+				background: rgba(239, 68, 68, 0.08);
+			}
+
+			.ep-badge.missing:hover {
+				background: rgba(239, 68, 68, 0.15);
+				border-color: rgba(239, 68, 68, 0.5);
+			}
+
+			.ep-badge.active {
+				box-shadow:
+					0 0 0 2px var(--background-secondary),
+					0 0 0 4px var(--ring-primary),
+					0 4px 12px rgba(0, 0, 0, 0.2);
+			}
+
+			.code-container {
+				background: var(--background);
+				border: 1px solid var(--border-subtle);
+				border-radius: var(--radius);
+				position: relative;
+				flex: 1;
+				overflow: hidden;
+				display: flex;
+				flex-direction: column;
+				box-shadow:
+					0 0 0 1px rgba(255, 255, 255, 0.02) inset,
+					0 2px 8px rgba(0, 0, 0, 0.1);
+			}
+
+			.code-actions {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0.625rem 1rem;
+				border-bottom: 1px solid var(--border-subtle);
+				background: rgba(255, 255, 255, 0.015);
+			}
+
+			.code-actions span {
+				font-family: "JetBrains Mono", monospace;
+				font-size: 0.75rem;
+				color: var(--muted-foreground);
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+
+			.code-actions span::before {
+				content: "";
+				width: 8px;
+				height: 8px;
+				border-radius: 50%;
+				background: var(--success);
+				animation: pulse 2s ease-in-out infinite;
+			}
+
+			@keyframes pulse {
+				0%,
+				100% {
+					opacity: 0.4;
+				}
+
+				50% {
+					opacity: 1;
+				}
+			}
+
+			.code-scroll {
+				padding: 0rem 0.5rem 0.5rem 0.5rem;
+				overflow: auto;
+				flex: 1;
+				font-family: "JetBrains Mono", monospace;
+				font-size: 0.8125rem;
+				line-height: 1.6;
+				color: #d4d4d8;
+			}
+
+			.code-scroll pre {
+				margin: 0;
+				white-space: pre-wrap;
+				word-break: break-word;
+			}
+
+			.sh-key {
+				color: var(--sh-key);
+			}
+
+			.sh-str {
+				color: var(--sh-string);
+			}
+
+			.sh-num {
+				color: var(--sh-number);
+			}
+
+			.sh-bool {
+				color: var(--sh-boolean);
+			}
+
+			.sh-null {
+				color: var(--sh-null);
+			}
+
+			.separator {
+				height: 0;
+				border-top: 1px solid var(--border);
+				margin: 1rem 0;
+			}
+
+			.grid-2 {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 0.625rem;
+			}
+
+			.spinner {
+				width: 16px;
+				height: 16px;
+				border: 2px solid var(--border);
+				border-top-color: var(--foreground);
+				border-radius: 50%;
+				animation: spin 0.7s linear infinite;
+			}
+
+			@keyframes spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+
+			.empty-state {
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				color: var(--muted-foreground);
+				gap: 0.75rem;
+				text-align: center;
+				padding: 2rem;
+			}
+
+			.empty-state svg {
+				width: 48px;
+				height: 48px;
+				opacity: 0.3;
+			}
+
+			.empty-state p {
+				font-size: 0.875rem;
+				margin: 0;
+			}
+
+			.footer {
 				font-size: 0.6875rem;
+				color: var(--muted-foreground);
+				text-align: center;
+				padding: 1rem 0 0.5rem;
+				border-top: 1px solid var(--border-subtle);
+				margin-top: auto;
+				opacity: 0.7;
 			}
 
-			.checkbox-grid {
-				grid-template-columns: 1fr;
+			.footer span {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.375rem;
 			}
 
-			.skip-type-selector {
-				grid-template-columns: repeat(2, 1fr);
+			@media (max-width: 900px) {
+				body {
+					font-size: 0.8125rem;
+				}
+
+				.layout {
+					grid-template-rows: auto 1fr;
+					height: 100vh;
+					height: 100dvh;
+				}
+
+				.sidebar {
+					padding: 1rem;
+					gap: 1rem;
+					max-height: 40vh;
+				}
+
+				.main-content {
+					padding: 1rem 0.75rem;
+					gap: 1rem;
+					min-height: 0;
+				}
+
+				.output-header {
+					padding-bottom: 0.875rem;
+					margin-bottom: 0.75rem;
+					flex-wrap: wrap;
+					gap: 0.5rem;
+				}
+
+				.output-header h2 {
+					font-size: 1rem;
+				}
+
+				.season-grid {
+					display: flex;
+					flex-wrap: nowrap;
+					gap: 0.375rem;
+					min-height: 3rem;
+					max-height: 3rem;
+					overflow-x: auto;
+					overflow-y: hidden;
+					padding: 0.5rem;
+					margin-bottom: 0.75rem;
+					background: var(--background);
+					border-radius: var(--radius);
+					border: 1px solid var(--border-subtle);
+					-webkit-overflow-scrolling: touch;
+					align-items: center;
+				}
+
+				.ep-badge {
+					height: 2rem;
+					min-width: 2.5rem;
+					flex-shrink: 0;
+					font-size: 0.75rem;
+				}
+
+				.code-container {
+					flex: 1;
+					min-height: 200px;
+				}
+
+				.code-scroll {
+					padding: 0.875rem;
+					font-size: 0.75rem;
+				}
+
+				.code-actions {
+					padding: 0.5rem 0.75rem;
+				}
+
+				.code-actions span {
+					font-size: 0.6875rem;
+				}
+
+				.form-section {
+					padding: 0.875rem;
+				}
+
+				h2 {
+					font-size: 1rem;
+				}
+
+				.section-title {
+					font-size: 0.75rem;
+					margin-bottom: 0.625rem;
+				}
+
+				label {
+					font-size: 0.75rem;
+				}
+
+				input[type="text"],
+				input[type="number"] {
+					height: 2.625rem;
+					font-size: 1rem;
+					padding: 0 0.75rem;
+				}
+
+				.checkbox-grid {
+					grid-template-columns: 1fr 1fr;
+					gap: 0.5rem;
+				}
+
+				.checkbox-wrapper {
+					padding: 0.625rem 0.5rem;
+				}
+
+				.custom-checkbox {
+					width: 1.25rem;
+					height: 1.25rem;
+				}
+
+				.checkbox-label {
+					font-size: 0.75rem;
+				}
+
+				.btn {
+					height: 2.625rem;
+					font-size: 0.875rem;
+				}
+
+				.btn-icon {
+					width: 2.625rem;
+				}
+
+				.grid-2 {
+					gap: 0.5rem;
+				}
+
+				.search-results {
+					max-height: 50vh;
+				}
+
+				.search-results-content {
+					max-height: 45vh;
+				}
+
+				.search-item {
+					padding: 0.625rem 0.75rem;
+				}
+
+				.search-item img {
+					width: 32px;
+					height: 46px;
+				}
+
+				.search-text b {
+					font-size: 0.75rem;
+				}
+
+				.search-text span {
+					font-size: 0.6875rem;
+				}
+
+				.tabs {
+					flex-wrap: nowrap;
+					gap: 0;
+				}
+
+				.tab {
+					padding: 0.625rem 0.75rem;
+					font-size: 0.75rem;
+					white-space: nowrap;
+					flex-shrink: 0;
+				}
+
+				.skip-editor {
+					padding: 1rem;
+				}
+
+				.skip-editor-title {
+					font-size: 0.8125rem;
+				}
+
+				.duration-display {
+					padding: 0.625rem 0.875rem;
+				}
+
+				.duration-label {
+					font-size: 0.6875rem;
+				}
+
+				.duration-value {
+					font-size: 0.8125rem;
+				}
+
+				.timeline-container {
+					padding: 1rem;
+				}
+
+				.timeline-track {
+					height: 56px;
+				}
+
+				.timeline-handle {
+					width: 20px;
+					height: 40px;
+					touch-action: none;
+				}
+
+				.timeline-handle.start {
+					left: -10px;
+				}
+
+				.timeline-handle.end {
+					right: -10px;
+				}
+
+				.timeline-selection {
+					touch-action: none;
+				}
+
+				.timeline-label {
+					font-size: 0.6875rem;
+				}
+
+				.timeline-value {
+					font-size: 0.8125rem;
+					padding: 0.375rem 0.625rem;
+				}
+
+				.timeline-tick {
+					font-size: 0.5625rem;
+				}
+
+				.time-inputs {
+					gap: 0.625rem;
+				}
+
+				.time-input-group {
+					padding: 0.75rem;
+				}
+
+				.time-input-label {
+					font-size: 0.625rem;
+					margin-bottom: 0.375rem;
+				}
+
+				.time-input-fields input {
+					width: 2.75rem;
+					height: 2.25rem;
+					font-size: 1rem;
+				}
+
+				.time-input-fields span {
+					font-size: 1rem;
+				}
+
+				.time-input-fields {
+					justify-content: flex-start;
+				}
+
+				.skip-type-selector {
+					display: grid;
+					grid-template-columns: repeat(3, 1fr);
+					gap: 0.375rem;
+				}
+
+				.skip-type-btn {
+					height: 2.5rem;
+					font-size: 0.6875rem;
+					padding: 0 0.375rem;
+				}
+
+				.provider-input label {
+					margin-bottom: 0.375rem;
+				}
+
+				.submit-info {
+					font-size: 0.6875rem;
+					padding: 0.625rem;
+				}
+
+				.skip-card {
+					padding: 0.875rem;
+				}
+
+				.skip-card-header {
+					flex-direction: column;
+					align-items: flex-start;
+					gap: 0.375rem;
+				}
+
+				.skip-card-type {
+					font-size: 0.6875rem;
+				}
+
+				.skip-card-times {
+					font-size: 0.8125rem;
+				}
+
+				.skip-card-meta {
+					font-size: 0.625rem;
+				}
+
+				.vote-container {
+					flex-direction: row;
+				}
+
+				.vote-btn {
+					flex: 1;
+					padding: 0.5rem;
+					font-size: 0.6875rem;
+				}
+
+				.toast {
+					left: 1rem;
+					right: 1rem;
+					bottom: 1rem;
+					text-align: center;
+				}
+
+				.empty-state {
+					padding: 1.5rem;
+				}
+
+				.empty-state svg {
+					width: 36px;
+					height: 36px;
+				}
+
+				.empty-state p {
+					font-size: 0.8125rem;
+				}
+			}
+
+			@media (max-width: 380px) {
+				.sidebar {
+					padding: 0.75rem;
+					max-height: 38vh;
+				}
+
+				.main-content {
+					padding: 0.75rem 0.5rem;
+				}
+
+				.season-grid {
+					gap: 0.25rem;
+					padding: 0.375rem;
+				}
+
+				.ep-badge {
+					min-width: 2.25rem;
+					height: 1.75rem;
+					font-size: 0.6875rem;
+				}
+
+				.checkbox-grid {
+					grid-template-columns: 1fr;
+				}
+
+				.skip-type-selector {
+					grid-template-columns: repeat(2, 1fr);
+				}
+
+				.time-input-fields input {
+					width: 2.5rem;
+					height: 2rem;
+					font-size: 0.875rem;
+				}
+			}
+
+			@media (max-width: 900px) {
+				.layout {
+					grid-template-columns: 1fr;
+					grid-template-rows: auto 1fr;
+				}
+
+				.sidebar {
+					border-right: none;
+					max-height: none;
+					height: calc(100vh - var(--sheet-height, 40px));
+					height: calc(100dvh - var(--sheet-height, 40px));
+					padding-bottom: 1rem;
+					overflow-y: auto;
+					overflow-x: hidden;
+					transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+				}
+
+				.sidebar::before {
+					display: none;
+				}
+
+				.sidebar.no-transition {
+					transition: none;
+				}
+
+				.layout {
+					height: 100vh;
+					height: 100dvh;
+					display: flex;
+					flex-direction: column;
+					overflow: hidden;
+				}
+
+				.main-content {
+					position: fixed;
+					bottom: 0;
+					left: 0;
+					right: 0;
+					height: 40px;
+					max-height: 40px;
+					border-radius: 1.25rem 1.25rem 0 0;
+					border-top: 1px solid var(--border);
+					box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+					transition:
+						height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+						max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+					z-index: 50;
+					padding: 0 1rem 1rem;
+					scrollbar-width: none;
+					-ms-overflow-style: none;
+					background: var(--background-secondary);
+				}
+
+				.main-content::-webkit-scrollbar {
+					display: none;
+				}
+
+				.main-content.expanded {
+					height: 100vh;
+					height: 100dvh;
+					max-height: 100vh;
+					max-height: 100dvh;
+					border-radius: 0;
+				}
+
+				.main-content.collapsed {
+					height: 40px;
+					max-height: 40px;
+					overflow: hidden;
+				}
+
+				.main-content.dragging {
+					transition: none;
+				}
+
+				.sheet-handle {
+					display: flex;
+					justify-content: center;
+					align-items: center;
+					padding: 0.75rem 0 0.5rem;
+					cursor: grab;
+					touch-action: none;
+					user-select: none;
+				}
+
+				.sheet-handle:active {
+					cursor: grabbing;
+				}
+
+				.sheet-handle-bar {
+					width: 36px;
+					height: 4px;
+					background: var(--muted-foreground);
+					border-radius: 2px;
+					opacity: 0.5;
+					transition:
+						opacity 0.2s,
+						width 0.2s;
+				}
+
+				.sheet-handle:hover .sheet-handle-bar,
+				.sheet-handle:active .sheet-handle-bar {
+					opacity: 0.8;
+					width: 44px;
+				}
+			}
+
+			.skip-editor {
+				background: var(--card);
+				border: 1px solid var(--border-subtle);
+				border-radius: var(--radius);
+				padding: 1.25rem;
+				margin-bottom: 1rem;
+			}
+
+			.skip-editor-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 1rem;
+			}
+
+			.skip-editor-title {
+				font-size: 0.9rem;
+				font-weight: 600;
+				color: var(--foreground);
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+			}
+
+			.skip-editor-title svg {
+				color: var(--success);
+			}
+
+			.timeline-container {
+				background: var(--background);
+				border-radius: calc(var(--radius) - 2px);
+				padding: 1.25rem;
+				margin-bottom: 1rem;
+				border: 1px solid var(--border-subtle);
+			}
+
+			.timeline-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 0.75rem;
+			}
+
+			.timeline-label {
+				font-size: 0.75rem;
+				font-weight: 500;
+				color: var(--muted-foreground);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+			}
+
+			.timeline-value {
+				font-family: "JetBrains Mono", monospace;
+				font-size: 0.875rem;
+				color: var(--foreground);
+				background: var(--secondary);
+				padding: 0.25rem 0.5rem;
+				border-radius: 4px;
+			}
+
+			.timeline-track {
+				position: relative;
+				height: 48px;
+				background: linear-gradient(90deg, var(--border-subtle) 0%, var(--muted) 100%);
+				border-radius: 6px;
+				cursor: pointer;
+				overflow: hidden;
+			}
+
+			.timeline-progress {
+				position: absolute;
+				height: 100%;
+				background: linear-gradient(90deg, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.5) 50%, rgba(34, 197, 94, 0.3) 100%);
+				border-radius: 6px;
+				pointer-events: none;
+				transition: width 0.1s ease;
+			}
+
+			.timeline-selection {
+				position: absolute;
+				height: 100%;
+				background: linear-gradient(180deg, rgba(99, 102, 241, 0.4) 0%, rgba(99, 102, 241, 0.6) 100%);
+				border-left: 3px solid #818cf8;
+				border-right: 3px solid #818cf8;
+				cursor: grab;
+				transition: background 0.15s ease;
+			}
+
+			.timeline-selection:active {
+				cursor: grabbing;
+				background: linear-gradient(180deg, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0.7) 100%);
+			}
+
+			.timeline-handle {
+				position: absolute;
+				top: 50%;
+				transform: translateY(-50%);
+				width: 14px;
+				height: 32px;
+				background: var(--foreground);
+				border-radius: 4px;
+				cursor: ew-resize;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+				transition: transform 0.1s ease;
+				z-index: 20;
+			}
+
+			.timeline-handle::after {
+				content: "";
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				width: 4px;
+				height: 16px;
+				background: repeating-linear-gradient(180deg, var(--background) 0px, var(--background) 2px, transparent 2px, transparent 4px);
+				border-radius: 2px;
+			}
+
+			.timeline-handle:hover {
+				transform: translateY(-50%) scale(1.1);
+			}
+
+			.timeline-handle.start {
+				left: -7px;
+			}
+
+			.timeline-handle.end {
+				right: -7px;
+			}
+
+			.timeline-ticks {
+				display: flex;
+				justify-content: space-between;
+				margin-top: 0.5rem;
+				padding: 0 0.25rem;
+			}
+
+			.timeline-tick {
+				font-size: 0.625rem;
+				color: var(--muted-foreground);
+				font-family: "JetBrains Mono", monospace;
+			}
+
+			.time-inputs {
+				display: grid;
+				grid-template-columns: 1fr 1fr;
+				gap: 1rem;
+				margin-bottom: 1rem;
+				max-width: 100%;
+				overflow: hidden;
+			}
+
+			.time-input-group {
+				background: var(--background);
+				border: 1px solid var(--border-subtle);
+				border-radius: calc(var(--radius) - 2px);
+				padding: 0.875rem;
+				min-width: 0;
+				overflow: hidden;
+			}
+
+			.time-input-label {
+				font-size: 0.6875rem;
+				font-weight: 500;
+				color: var(--muted-foreground);
+				text-transform: uppercase;
+				letter-spacing: 0.05em;
+				margin-bottom: 0.5rem;
+			}
+
+			.time-input-fields {
+				display: flex;
+				align-items: center;
+				gap: 0.375rem;
 			}
 
 			.time-input-fields input {
-				width: 2.5rem;
+				width: 48px;
 				height: 2rem;
-				font-size: 0.875rem;
-			}
-		}
-
-		@media (max-width: 900px) {
-			.layout {
-				grid-template-columns: 1fr;
-				grid-template-rows: auto 1fr;
+				text-align: center;
+				font-family: "JetBrains Mono", monospace;
+				font-size: 1rem;
+				font-weight: 500;
+				padding: 0;
+				border-radius: 4px;
 			}
 
-			.sidebar {
-				border-right: none;
-				max-height: none;
-				height: calc(100vh - var(--sheet-height, 40px));
-				height: calc(100dvh - var(--sheet-height, 40px));
-				padding-bottom: 1rem;
-				overflow-y: auto;
-				overflow-x: hidden;
-				transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			.time-input-fields span {
+				font-size: 1.25rem;
+				color: var(--muted-foreground);
+				font-weight: 600;
 			}
 
-			.sidebar::before {
-				display: none;
-			}
-
-			.sidebar.no-transition {
-				transition: none;
-			}
-
-			.layout {
-				height: 100vh;
-				height: 100dvh;
+			.skip-type-selector {
 				display: flex;
-				flex-direction: column;
-				overflow: hidden;
+				gap: 0.5rem;
+				margin-bottom: 1rem;
 			}
 
-			.main-content {
-				position: fixed;
-				bottom: 0;
-				left: 0;
-				right: 0;
-				height: 40px;
-				max-height: 40px;
-				border-radius: 1.25rem 1.25rem 0 0;
-				border-top: 1px solid var(--border);
-				box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
-				transition:
-					height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-					max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-				z-index: 50;
-				padding: 0 1rem 1rem;
-				scrollbar-width: none;
-				-ms-overflow-style: none;
-				background: var(--background-secondary);
-			}
-
-			.main-content::-webkit-scrollbar {
-				display: none;
-			}
-
-			.main-content.expanded {
-				height: 100vh;
-				height: 100dvh;
-				max-height: 100vh;
-				max-height: 100dvh;
-				border-radius: 0;
-			}
-
-			.main-content.collapsed {
-				height: 40px;
-				max-height: 40px;
-				overflow: hidden;
-			}
-
-			.main-content.dragging {
-				transition: none;
-			}
-
-			.sheet-handle {
+			.skip-type-btn {
+				flex: 1;
+				height: 2.5rem;
 				display: flex;
-				justify-content: center;
 				align-items: center;
-				padding: 0.75rem 0 0.5rem;
-				cursor: grab;
-				touch-action: none;
-				user-select: none;
+				justify-content: center;
+				gap: 0.375rem;
+				background: var(--background);
+				border: 1px solid var(--border-subtle);
+				border-radius: calc(var(--radius) - 2px);
+				color: var(--muted-foreground);
+				font-size: 0.8125rem;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.2s ease;
 			}
 
-			.sheet-handle:active {
-				cursor: grabbing;
+			.skip-type-btn:hover {
+				border-color: var(--ring);
+				color: var(--foreground);
 			}
 
-			.sheet-handle-bar {
-				width: 36px;
-				height: 4px;
-				background: var(--muted-foreground);
-				border-radius: 2px;
-				opacity: 0.5;
-				transition:
-					opacity 0.2s,
-					width 0.2s;
+			.skip-type-btn.active {
+				background: var(--foreground);
+				color: var(--background);
+				border-color: var(--foreground);
 			}
 
-			.sheet-handle:hover .sheet-handle-bar,
-			.sheet-handle:active .sheet-handle-bar {
-				opacity: 0.8;
-				width: 44px;
-			}
-		}
-
-		.skip-editor {
-			background: var(--card);
-			border: 1px solid var(--border-subtle);
-			border-radius: var(--radius);
-			padding: 1.25rem;
-			margin-bottom: 1rem;
-		}
-
-		.skip-editor-header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 1rem;
-		}
-
-		.skip-editor-title {
-			font-size: 0.9rem;
-			font-weight: 600;
-			color: var(--foreground);
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-		}
-
-		.skip-editor-title svg {
-			color: var(--success);
-		}
-
-		.timeline-container {
-			background: var(--background);
-			border-radius: calc(var(--radius) - 2px);
-			padding: 1.25rem;
-			margin-bottom: 1rem;
-			border: 1px solid var(--border-subtle);
-		}
-
-		.timeline-header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 0.75rem;
-		}
-
-		.timeline-label {
-			font-size: 0.75rem;
-			font-weight: 500;
-			color: var(--muted-foreground);
-			text-transform: uppercase;
-			letter-spacing: 0.05em;
-		}
-
-		.timeline-value {
-			font-family: "JetBrains Mono", monospace;
-			font-size: 0.875rem;
-			color: var(--foreground);
-			background: var(--secondary);
-			padding: 0.25rem 0.5rem;
-			border-radius: 4px;
-		}
-
-		.timeline-track {
-			position: relative;
-			height: 48px;
-			background: linear-gradient(90deg, var(--border-subtle) 0%, var(--muted) 100%);
-			border-radius: 6px;
-			cursor: pointer;
-			overflow: hidden;
-		}
-
-		.timeline-progress {
-			position: absolute;
-			height: 100%;
-			background: linear-gradient(90deg, rgba(34, 197, 94, 0.3) 0%, rgba(34, 197, 94, 0.5) 50%, rgba(34, 197, 94, 0.3) 100%);
-			border-radius: 6px;
-			pointer-events: none;
-			transition: width 0.1s ease;
-		}
-
-		.timeline-selection {
-			position: absolute;
-			height: 100%;
-			background: linear-gradient(180deg, rgba(99, 102, 241, 0.4) 0%, rgba(99, 102, 241, 0.6) 100%);
-			border-left: 3px solid #818cf8;
-			border-right: 3px solid #818cf8;
-			cursor: grab;
-			transition: background 0.15s ease;
-		}
-
-		.timeline-selection:active {
-			cursor: grabbing;
-			background: linear-gradient(180deg, rgba(99, 102, 241, 0.5) 0%, rgba(99, 102, 241, 0.7) 100%);
-		}
-
-		.timeline-handle {
-			position: absolute;
-			top: 50%;
-			transform: translateY(-50%);
-			width: 14px;
-			height: 32px;
-			background: var(--foreground);
-			border-radius: 4px;
-			cursor: ew-resize;
-			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-			transition: transform 0.1s ease;
-			z-index: 10;
-		}
-
-		.timeline-handle::after {
-			content: "";
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-			width: 4px;
-			height: 16px;
-			background: repeating-linear-gradient(180deg, var(--background) 0px, var(--background) 2px, transparent 2px, transparent 4px);
-			border-radius: 2px;
-		}
-
-		.timeline-handle:hover {
-			transform: translateY(-50%) scale(1.1);
-		}
-
-		.timeline-handle.start {
-			left: -7px;
-		}
-
-		.timeline-handle.end {
-			right: -7px;
-		}
-
-		.timeline-ticks {
-			display: flex;
-			justify-content: space-between;
-			margin-top: 0.5rem;
-			padding: 0 0.25rem;
-		}
-
-		.timeline-tick {
-			font-size: 0.625rem;
-			color: var(--muted-foreground);
-			font-family: "JetBrains Mono", monospace;
-		}
-
-		.time-inputs {
-			display: grid;
-			grid-template-columns: 1fr 1fr;
-			gap: 1rem;
-			margin-bottom: 1rem;
-			max-width: 100%;
-			overflow: hidden;
-		}
-
-		.time-input-group {
-			background: var(--background);
-			border: 1px solid var(--border-subtle);
-			border-radius: calc(var(--radius) - 2px);
-			padding: 0.875rem;
-			min-width: 0;
-			overflow: hidden;
-		}
-
-		.time-input-label {
-			font-size: 0.6875rem;
-			font-weight: 500;
-			color: var(--muted-foreground);
-			text-transform: uppercase;
-			letter-spacing: 0.05em;
-			margin-bottom: 0.5rem;
-		}
-
-		.time-input-fields {
-			display: flex;
-			align-items: center;
-			gap: 0.375rem;
-		}
-
-		.time-input-fields input {
-			width: 48px;
-			height: 2rem;
-			text-align: center;
-			font-family: "JetBrains Mono", monospace;
-			font-size: 1rem;
-			font-weight: 500;
-			padding: 0;
-			border-radius: 4px;
-		}
-
-		.time-input-fields span {
-			font-size: 1.25rem;
-			color: var(--muted-foreground);
-			font-weight: 600;
-		}
-
-		.skip-type-selector {
-			display: flex;
-			gap: 0.5rem;
-			margin-bottom: 1rem;
-		}
-
-		.skip-type-btn {
-			flex: 1;
-			height: 2.5rem;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			gap: 0.375rem;
-			background: var(--background);
-			border: 1px solid var(--border-subtle);
-			border-radius: calc(var(--radius) - 2px);
-			color: var(--muted-foreground);
-			font-size: 0.8125rem;
-			font-weight: 500;
-			cursor: pointer;
-			transition: all 0.2s ease;
-		}
-
-		.skip-type-btn:hover {
-			border-color: var(--ring);
-			color: var(--foreground);
-		}
-
-		.skip-type-btn.active {
-			background: var(--foreground);
-			color: var(--background);
-			border-color: var(--foreground);
-		}
-
-		.skip-type-btn.active.op {
-			background: linear-gradient(135deg, #22c55e, #16a34a);
-			border-color: #22c55e;
-			color: white;
-		}
-
-		.skip-type-btn.active.ed {
-			background: linear-gradient(135deg, #6366f1, #4f46e5);
-			border-color: #6366f1;
-			color: white;
-		}
-
-		.skip-type-btn.active.recap {
-			background: linear-gradient(135deg, #f59e0b, #d97706);
-			border-color: #f59e0b;
-			color: white;
-		}
-
-		.skip-type-btn.active.mixed-op {
-			background: linear-gradient(135deg, #10b981, #059669);
-			border-color: #10b981;
-			color: white;
-		}
-
-		.skip-type-btn.active.mixed-ed {
-			background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-			border-color: #8b5cf6;
-			color: white;
-		}
-
-		.vote-container {
-			display: flex;
-			gap: 0.5rem;
-			margin-top: 0.75rem;
-		}
-
-		.vote-btn {
-			display: inline-flex;
-			align-items: center;
-			justify-content: center;
-			gap: 0.375rem;
-			padding: 0.375rem 0.75rem;
-			border-radius: 6px;
-			font-size: 0.75rem;
-			font-weight: 500;
-			cursor: pointer;
-			transition: all 0.2s ease;
-			border: 1px solid var(--border-subtle);
-			background: var(--card);
-			color: var(--muted-foreground);
-		}
-
-		.vote-btn:hover {
-			border-color: var(--ring);
-			color: var(--foreground);
-		}
-
-		.vote-btn.upvote:hover {
-			background: var(--success-muted);
-			border-color: var(--success);
-			color: var(--success);
-		}
-
-		.vote-btn.downvote:hover {
-			background: rgba(239, 68, 68, 0.1);
-			border-color: var(--destructive);
-			color: var(--destructive);
-		}
-
-		.vote-btn.voted {
-			pointer-events: none;
-		}
-
-		.vote-btn.upvote.voted {
-			background: var(--success-muted);
-			border-color: var(--success);
-			color: var(--success);
-		}
-
-		.vote-btn.downvote.voted {
-			background: rgba(239, 68, 68, 0.1);
-			border-color: var(--destructive);
-			color: var(--destructive);
-		}
-
-		.submit-section {
-			background: var(--card);
-			border: 1px solid var(--border-subtle);
-			border-radius: var(--radius);
-			padding: 1.25rem;
-			margin-top: 1rem;
-		}
-
-		.submit-header {
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-			margin-bottom: 1rem;
-		}
-
-		.submit-header svg {
-			color: var(--warning);
-		}
-
-		.submit-info {
-			font-size: 0.75rem;
-			color: var(--muted-foreground);
-			background: var(--warning-muted);
-			border: 1px solid rgba(245, 158, 11, 0.2);
-			border-radius: calc(var(--radius) - 2px);
-			padding: 0.75rem;
-			margin-bottom: 1rem;
-			line-height: 1.5;
-		}
-
-		.provider-input {
-			margin-bottom: 1rem;
-		}
-
-		.skip-card {
-			background: var(--card);
-			border: 1px solid var(--border-subtle);
-			border-radius: var(--radius);
-			padding: 1rem;
-			margin-bottom: 0.75rem;
-			transition: all 0.2s ease;
-		}
-
-		.skip-card:hover {
-			border-color: var(--ring);
-		}
-
-		.skip-card-header {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			margin-bottom: 0.5rem;
-		}
-
-		.skip-card-type {
-			display: inline-flex;
-			align-items: center;
-			gap: 0.375rem;
-			font-size: 0.75rem;
-			font-weight: 600;
-			padding: 0.25rem 0.625rem;
-			border-radius: 4px;
-			text-transform: uppercase;
-		}
-
-		.skip-card-type.op {
-			background: var(--success-muted);
-			color: #4ade80;
-		}
-
-		.skip-card-type.ed {
-			background: rgba(99, 102, 241, 0.15);
-			color: #818cf8;
-		}
-
-		.skip-card-type.recap {
-			background: var(--warning-muted);
-			color: #fbbf24;
-		}
-
-		.skip-card-times {
-			font-family: "JetBrains Mono", monospace;
-			font-size: 0.875rem;
-			color: var(--foreground);
-		}
-
-		.skip-card-meta {
-			font-size: 0.6875rem;
-			color: var(--muted-foreground);
-			margin-top: 0.25rem;
-		}
-
-		.tabs {
-			display: flex;
-			border-bottom: 1px solid var(--border-subtle);
-			margin-bottom: 0;
-			position: sticky;
-			top: 0;
-			z-index: 10;
-			background: var(--background);
-		}
-
-		.tab {
-			padding: 0.75rem 1rem;
-			font-size: 0.8125rem;
-			font-weight: 500;
-			color: var(--muted-foreground);
-			cursor: pointer;
-			border-bottom: 2px solid transparent;
-			transition: all 0.2s ease;
-			margin-bottom: -1px;
-		}
-
-		.tab:hover {
-			color: var(--foreground);
-		}
-
-		.tab.active {
-			color: var(--foreground);
-			border-bottom-color: var(--foreground);
-		}
-
-		.tab-content {
-			display: none;
-			padding-top: 1rem;
-		}
-
-		.tab-content.active {
-			display: block;
-		}
-
-		.duration-display {
-			display: none;
-			justify-content: space-between;
-			align-items: center;
-			padding: 0.75rem 1rem;
-			background: var(--secondary);
-			border-radius: calc(var(--radius) - 2px);
-			margin-bottom: 1rem;
-		}
-
-		.duration-label {
-			font-size: 0.75rem;
-			color: var(--muted-foreground);
-		}
-
-		.duration-value {
-			font-family: "JetBrains Mono", monospace;
-			font-size: 0.875rem;
-			font-weight: 500;
-			color: var(--foreground);
-		}
-
-		.toast {
-			position: fixed;
-			bottom: 2rem;
-			right: 2rem;
-			padding: 1rem 1.5rem;
-			border-radius: var(--radius);
-			font-size: 0.875rem;
-			font-weight: 500;
-			z-index: 100;
-			animation: slideIn 0.3s ease-out;
-			box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-		}
-
-		.toast.success {
-			background: linear-gradient(135deg, #22c55e, #16a34a);
-			color: white;
-		}
-
-		.toast.error {
-			background: linear-gradient(135deg, #ef4444, #dc2626);
-			color: white;
-		}
-
-		@keyframes slideIn {
-			from {
-				opacity: 0;
-				transform: translateY(20px);
+			.skip-type-btn.active.op {
+				background: linear-gradient(135deg, #22c55e, #16a34a);
+				border-color: #22c55e;
+				color: white;
 			}
 
-			to {
-				opacity: 1;
-				transform: translateY(0);
+			.skip-type-btn.active.ed {
+				background: linear-gradient(135deg, #6366f1, #4f46e5);
+				border-color: #6366f1;
+				color: white;
 			}
-		}
-	</style>
-</head>
 
-<body>
-	<div class="layout">
-		<aside class="sidebar">
-			<div>
-				<h2>Параметры</h2>
-				<p class="hint">Конфигурация запроса к Aniskip API</p>
-			</div>
+			.skip-type-btn.active.recap {
+				background: linear-gradient(135deg, #f59e0b, #d97706);
+				border-color: #f59e0b;
+				color: white;
+			}
 
-			<div class="form-group" style="position: relative">
-				<label>Поиск Jikan API</label>
-				<div style="display: flex; gap: 0.5rem">
-					<input type="text" id="searchTerm" value="Frieren" placeholder="Название..." autocomplete="off" />
-					<button class="btn btn-outline btn-icon" onclick="searchJikan()">
-						<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-							<path
-								d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z"
-								fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
-						</svg>
-					</button>
-				</div>
+			.skip-type-btn.active.mixed-op {
+				background: linear-gradient(135deg, #10b981, #059669);
+				border-color: #10b981;
+				color: white;
+			}
 
-				<div id="searchResults" class="search-results">
-					<div id="searchResultsList" class="search-results-content"></div>
-				</div>
-			</div>
+			.skip-type-btn.active.mixed-ed {
+				background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+				border-color: #8b5cf6;
+				color: white;
+			}
 
-			<div class="separator" style="margin: 0.5rem 0"></div>
+			.vote-container {
+				display: flex;
+				gap: 0.5rem;
+				margin-top: 0.75rem;
+			}
 
-			<div class="form-group">
-				<label>MAL ID</label>
-				<input type="number" id="malId" value="52991" placeholder="Anime ID" />
-			</div>
+			.vote-btn {
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 0.375rem;
+				padding: 0.375rem 0.75rem;
+				border-radius: 6px;
+				font-size: 0.75rem;
+				font-weight: 500;
+				cursor: pointer;
+				transition: all 0.2s ease;
+				border: 1px solid var(--border-subtle);
+				background: var(--card);
+				color: var(--muted-foreground);
+			}
 
-			<div class="form-group">
-				<label>Длительность (сек)</label>
-				<input type="number" id="epDur" value="0" placeholder="0" />
-				<p class="hint">По умолчанию 0 = нестрогий поиск.</p>
-			</div>
+			.vote-btn:hover {
+				border-color: var(--ring);
+				color: var(--foreground);
+			}
 
-			<div class="form-group">
-				<label style="margin-bottom: 0.75rem">Типы пропуска (Skip Types)</label>
-				<div class="checkbox-grid">
-					<label class="checkbox-wrapper">
-						<input type="checkbox" class="type-chk" value="op" checked />
-						<div class="custom-checkbox">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"
-								stroke-linecap="round" stroke-linejoin="round">
-								<polyline points="20 6 9 17 4 12"></polyline>
-							</svg>
-						</div>
-						<span class="checkbox-label">OP</span>
-					</label>
-					<label class="checkbox-wrapper">
-						<input type="checkbox" class="type-chk" value="ed" checked />
-						<div class="custom-checkbox">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"
-								stroke-linecap="round" stroke-linejoin="round">
-								<polyline points="20 6 9 17 4 12"></polyline>
-							</svg>
-						</div>
-						<span class="checkbox-label">ED</span>
-					</label>
-					<label class="checkbox-wrapper checkbox-full-width">
-						<input type="checkbox" class="type-chk" value="recap" checked />
-						<div class="custom-checkbox">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"
-								stroke-linecap="round" stroke-linejoin="round">
-								<polyline points="20 6 9 17 4 12"></polyline>
-							</svg>
-						</div>
-						<span class="checkbox-label">Recap</span>
-					</label>
-					<label class="checkbox-wrapper">
-						<input type="checkbox" class="type-chk" value="mixed-op" checked />
-						<div class="custom-checkbox">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"
-								stroke-linecap="round" stroke-linejoin="round">
-								<polyline points="20 6 9 17 4 12"></polyline>
-							</svg>
-						</div>
-						<span class="checkbox-label">Mixed-OP</span>
-					</label>
-					<label class="checkbox-wrapper">
-						<input type="checkbox" class="type-chk" value="mixed-ed" checked />
-						<div class="custom-checkbox">
-							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"
-								stroke-linecap="round" stroke-linejoin="round">
-								<polyline points="20 6 9 17 4 12"></polyline>
-							</svg>
-						</div>
-						<span class="checkbox-label">Mixed-ED</span>
-					</label>
-				</div>
-			</div>
+			.vote-btn.upvote:hover {
+				background: var(--success-muted);
+				border-color: var(--success);
+				color: var(--success);
+			}
 
-			<div class="separator"></div>
+			.vote-btn.downvote:hover {
+				background: rgba(239, 68, 68, 0.1);
+				border-color: var(--destructive);
+				color: var(--destructive);
+			}
 
-			<div>
-				<div class="section-title">Одиночный запрос</div>
-				<div class="grid-2">
-					<input type="number" id="epNum" value="1" placeholder="№" />
-					<button class="btn btn-outline" onclick="fetchSingle()">Проверить</button>
-				</div>
-			</div>
+			.vote-btn.voted {
+				pointer-events: none;
+			}
 
-			<div>
-				<div class="section-title">Загрузка сезона</div>
-				<div class="grid-2" style="margin-bottom: 0.75rem">
-					<div style="position: relative">
-						<label style="font-size: 0.75rem; color: var(--muted-foreground)">С</label>
-						<input type="number" id="seasonStart" value="1" />
-					</div>
-					<div style="position: relative">
-						<label style="font-size: 0.75rem; color: var(--muted-foreground)">По</label>
-						<input type="number" id="seasonEnd" value="28" />
-					</div>
-				</div>
-				<button class="btn btn-primary" onclick="fetchSeason()">Загрузить диапазон</button>
-			</div>
+			.vote-btn.upvote.voted {
+				background: var(--success-muted);
+				border-color: var(--success);
+				color: var(--success);
+			}
 
-			<div style="flex: 1"></div>
-		</aside>
+			.vote-btn.downvote.voted {
+				background: rgba(239, 68, 68, 0.1);
+				border-color: var(--destructive);
+				color: var(--destructive);
+			}
 
-		<main class="main-content" id="mainContent">
-			<div class="sheet-handle" id="sheetHandle">
-				<div class="sheet-handle-bar"></div>
-			</div>
+			.submit-section {
+				background: var(--card);
+				border: 1px solid var(--border-subtle);
+				border-radius: var(--radius);
+				padding: 1.25rem;
+				margin-top: 1rem;
+			}
 
-			<div class="output-header">
+			.submit-header {
+				display: flex;
+				align-items: center;
+				gap: 0.5rem;
+				margin-bottom: 1rem;
+			}
+
+			.submit-header svg {
+				color: var(--warning);
+			}
+
+			.submit-info {
+				font-size: 0.75rem;
+				color: var(--muted-foreground);
+				background: var(--warning-muted);
+				border: 1px solid rgba(245, 158, 11, 0.2);
+				border-radius: calc(var(--radius) - 2px);
+				padding: 0.75rem;
+				margin-bottom: 1rem;
+				line-height: 1.5;
+			}
+
+			.provider-input {
+				margin-bottom: 1rem;
+			}
+
+			.skip-card {
+				background: var(--card);
+				border: 1px solid var(--border-subtle);
+				border-radius: var(--radius);
+				padding: 1rem;
+				margin-bottom: 0.75rem;
+				transition: all 0.2s ease;
+			}
+
+			.skip-card:hover {
+				border-color: var(--ring);
+			}
+
+			.skip-card-header {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 0.5rem;
+			}
+
+			.skip-card-type {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.375rem;
+				font-size: 0.75rem;
+				font-weight: 600;
+				padding: 0.25rem 0.625rem;
+				border-radius: 4px;
+				text-transform: uppercase;
+			}
+
+			.skip-card-type.op {
+				background: var(--success-muted);
+				color: #4ade80;
+			}
+
+			.skip-card-type.ed {
+				background: rgba(99, 102, 241, 0.15);
+				color: #818cf8;
+			}
+
+			.skip-card-type.recap {
+				background: var(--warning-muted);
+				color: #fbbf24;
+			}
+
+			.skip-card-times {
+				font-family: "JetBrains Mono", monospace;
+				font-size: 0.875rem;
+				color: var(--foreground);
+			}
+
+			.skip-card-meta {
+				font-size: 0.6875rem;
+				color: var(--muted-foreground);
+				margin-top: 0.25rem;
+			}
+
+			.tabs {
+				display: flex;
+				border-bottom: 1px solid var(--border-subtle);
+				margin-bottom: 0;
+				position: sticky;
+				top: 0;
+				z-index: 10;
+				background: var(--background);
+			}
+
+			.tab {
+				padding: 0.75rem 1rem;
+				font-size: 0.8125rem;
+				font-weight: 500;
+				color: var(--muted-foreground);
+				cursor: pointer;
+				border-bottom: 2px solid transparent;
+				transition: all 0.2s ease;
+				margin-bottom: -1px;
+			}
+
+			.tab:hover {
+				color: var(--foreground);
+			}
+
+			.tab.active {
+				color: var(--foreground);
+				border-bottom-color: var(--foreground);
+			}
+
+			.tab-content {
+				display: none;
+				padding-top: 1rem;
+			}
+
+			.tab-content.active {
+				display: block;
+			}
+
+			.duration-display {
+				display: none;
+				justify-content: space-between;
+				align-items: center;
+				padding: 0.75rem 1rem;
+				background: var(--secondary);
+				border-radius: calc(var(--radius) - 2px);
+				margin-bottom: 1rem;
+			}
+
+			.duration-label {
+				font-size: 0.75rem;
+				color: var(--muted-foreground);
+			}
+
+			.duration-value {
+				font-family: "JetBrains Mono", monospace;
+				font-size: 0.875rem;
+				font-weight: 500;
+				color: var(--foreground);
+			}
+
+			.toast {
+				position: fixed;
+				bottom: 2rem;
+				right: 2rem;
+				padding: 1rem 1.5rem;
+				border-radius: var(--radius);
+				font-size: 0.875rem;
+				font-weight: 500;
+				z-index: 100;
+				animation: slideIn 0.3s ease-out;
+				box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+			}
+
+			.toast.success {
+				background: linear-gradient(135deg, #22c55e, #16a34a);
+				color: white;
+			}
+
+			.toast.error {
+				background: linear-gradient(135deg, #ef4444, #dc2626);
+				color: white;
+			}
+
+			@keyframes slideIn {
+				from {
+					opacity: 0;
+					transform: translateY(20px);
+				}
+
+				to {
+					opacity: 1;
+					transform: translateY(0);
+				}
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="layout">
+			<aside class="sidebar">
 				<div>
-					<h2 id="resultTitle">Консоль</h2>
-					<p class="hint">Результаты запросов</p>
+					<h2>Параметры</h2>
+					<p class="hint">Конфигурация запроса к Aniskip API</p>
 				</div>
-				<button class="btn btn-outline" style="width: auto; height: 2rem" onclick="clearLog()">Очистить</button>
-			</div>
 
-			<div id="gridContainer"></div>
+				<div class="form-group" style="position: relative">
+					<label>Поиск Jikan API</label>
+					<div style="display: flex; gap: 0.5rem">
+						<input type="text" id="searchTerm" value="Frieren" placeholder="Название..." autocomplete="off" />
+						<button class="btn btn-outline btn-icon" onclick="searchJikan()">
+							<svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<path d="M10 6.5C10 8.433 8.433 10 6.5 10C4.567 10 3 8.433 3 6.5C3 4.567 4.567 3 6.5 3C8.433 3 10 4.567 10 6.5ZM9.30884 10.0159C8.53901 10.6318 7.56251 11 6.5 11C4.01472 11 2 8.98528 2 6.5C2 4.01472 4.01472 2 6.5 2C8.98528 2 11 4.01472 11 6.5C11 7.56251 10.6318 8.53901 10.0159 9.30884L12.8536 12.1464C13.0488 12.3417 13.0488 12.6583 12.8536 12.8536C12.6583 13.0488 12.3417 13.0488 12.1464 12.8536L9.30884 10.0159Z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"></path>
+							</svg>
+						</button>
+					</div>
 
-			<div class="code-container">
-				<div class="code-actions">
-					<span id="codeLabel">Терминал</span>
-					<button class="btn btn-outline"
-						style="width: auto; height: 1.75rem; font-size: 0.75rem; padding: 0 0.75rem; gap: 0.375rem"
-						onclick="copyToClipboard()">
-						<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-							stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-							<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-							<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-						</svg>
-						Копировать
-					</button>
-				</div>
-				<div class="code-scroll" id="codeOutput">
-					<div class="empty-state">
-						<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-							stroke-linecap="round" stroke-linejoin="round">
-							<polyline points="16 18 22 12 16 6" />
-							<polyline points="8 6 2 12 8 18" />
-						</svg>
-						<p>Ожидание действий...</p>
+					<div id="searchResults" class="search-results">
+						<div id="searchResultsList" class="search-results-content"></div>
 					</div>
 				</div>
-			</div>
-		</main>
-	</div>
 
-	<script>
-		const ANISKIP_BASE = "https://api.aniskip.com/v2/skip-times";
-		const ANISKIP_VOTE_BASE = "https://api.aniskip.com/v2/skip-times/vote";
+				<div class="separator" style="margin: 0.5rem 0"></div>
 
-		const $ = (id) => document.getElementById(id);
+				<div class="form-group">
+					<label>MAL ID</label>
+					<input type="number" id="malId" value="52991" placeholder="Anime ID" />
+				</div>
 
-		function getSubmitterId() {
-			let id = localStorage.getItem("aniskip_submitter_id");
-			if (!id) {
-				id = crypto.randomUUID
-					? crypto.randomUUID()
-					: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-						const r = (Math.random() * 16) | 0;
-						return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
-					});
-				localStorage.setItem("aniskip_submitter_id", id);
+				<div class="form-group">
+					<label>Длительность (сек)</label>
+					<input type="number" id="epDur" value="0" placeholder="0" />
+					<p class="hint">По умолчанию 0 = нестрогий поиск.</p>
+				</div>
+
+				<div class="form-group">
+					<label style="margin-bottom: 0.75rem">Типы пропуска (Skip Types)</label>
+					<div class="checkbox-grid">
+						<label class="checkbox-wrapper">
+							<input type="checkbox" class="type-chk" value="op" checked />
+							<div class="custom-checkbox">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+									<polyline points="20 6 9 17 4 12"></polyline>
+								</svg>
+							</div>
+							<span class="checkbox-label">OP</span>
+						</label>
+						<label class="checkbox-wrapper">
+							<input type="checkbox" class="type-chk" value="ed" checked />
+							<div class="custom-checkbox">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+									<polyline points="20 6 9 17 4 12"></polyline>
+								</svg>
+							</div>
+							<span class="checkbox-label">ED</span>
+						</label>
+						<label class="checkbox-wrapper checkbox-full-width">
+							<input type="checkbox" class="type-chk" value="recap" checked />
+							<div class="custom-checkbox">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+									<polyline points="20 6 9 17 4 12"></polyline>
+								</svg>
+							</div>
+							<span class="checkbox-label">Recap</span>
+						</label>
+						<label class="checkbox-wrapper">
+							<input type="checkbox" class="type-chk" value="mixed-op" checked />
+							<div class="custom-checkbox">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+									<polyline points="20 6 9 17 4 12"></polyline>
+								</svg>
+							</div>
+							<span class="checkbox-label">Mixed-OP</span>
+						</label>
+						<label class="checkbox-wrapper">
+							<input type="checkbox" class="type-chk" value="mixed-ed" checked />
+							<div class="custom-checkbox">
+								<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+									<polyline points="20 6 9 17 4 12"></polyline>
+								</svg>
+							</div>
+							<span class="checkbox-label">Mixed-ED</span>
+						</label>
+					</div>
+				</div>
+
+				<div class="separator"></div>
+
+				<div>
+					<div class="section-title">Одиночный запрос</div>
+					<div class="grid-2">
+						<input type="number" id="epNum" value="1" placeholder="№" />
+						<button class="btn btn-outline" onclick="fetchSingle()">Проверить</button>
+					</div>
+				</div>
+
+				<div>
+					<div class="section-title">Загрузка сезона</div>
+					<div class="grid-2" style="margin-bottom: 0.75rem">
+						<div style="position: relative">
+							<label style="font-size: 0.75rem; color: var(--muted-foreground)">С</label>
+							<input type="number" id="seasonStart" value="1" />
+						</div>
+						<div style="position: relative">
+							<label style="font-size: 0.75rem; color: var(--muted-foreground)">По</label>
+							<input type="number" id="seasonEnd" value="28" />
+						</div>
+					</div>
+					<button class="btn btn-primary" onclick="fetchSeason()">Загрузить диапазон</button>
+				</div>
+
+				<div style="flex: 1"></div>
+			</aside>
+
+			<main class="main-content" id="mainContent">
+				<div class="sheet-handle" id="sheetHandle">
+					<div class="sheet-handle-bar"></div>
+				</div>
+
+				<div class="output-header">
+					<div>
+						<h2 id="resultTitle">Консоль</h2>
+						<p class="hint">Результаты запросов</p>
+					</div>
+					<button class="btn btn-outline" style="width: auto; height: 2rem" onclick="clearLog()">Очистить</button>
+				</div>
+
+				<div id="gridContainer"></div>
+
+				<div class="code-container">
+					<div class="code-actions">
+						<span id="codeLabel">Терминал</span>
+						<button class="btn btn-outline" style="width: auto; height: 1.75rem; font-size: 0.75rem; padding: 0 0.75rem; gap: 0.375rem" onclick="copyToClipboard()">
+							<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+								<rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+								<path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+							</svg>
+							Копировать
+						</button>
+					</div>
+					<div class="code-scroll" id="codeOutput">
+						<div class="empty-state">
+							<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+								<polyline points="16 18 22 12 16 6" />
+								<polyline points="8 6 2 12 8 18" />
+							</svg>
+							<p>Ожидание действий...</p>
+						</div>
+					</div>
+				</div>
+			</main>
+		</div>
+
+		<script>
+			const ANISKIP_BASE = "https://api.aniskip.com/v2/skip-times";
+			const ANISKIP_VOTE_BASE = "https://api.aniskip.com/v2/skip-times/vote";
+
+			const $ = (id) => document.getElementById(id);
+
+			function getSubmitterId() {
+				let id = localStorage.getItem("aniskip_submitter_id");
+				if (!id) {
+					id = crypto.randomUUID
+						? crypto.randomUUID()
+						: "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+								const r = (Math.random() * 16) | 0;
+								return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+							});
+					localStorage.setItem("aniskip_submitter_id", id);
+				}
+				return id;
 			}
-			return id;
-		}
 
-		function getDefaultProvider() {
-			return localStorage.getItem("aniskip_provider_name") || "Aniskip";
-		}
-
-		function saveDefaultProvider() {
-			const name = $("providerName")?.value || "Aniskip";
-			localStorage.setItem("aniskip_provider_name", name);
-			showToast("Ник сохранён по умолчанию!", "success");
-		}
-
-		let realEpisodeDuration = 1440;
-
-		function secondsToTime(totalSeconds) {
-			const mins = Math.floor(totalSeconds / 60);
-			const secs = Math.floor(totalSeconds % 60);
-			return { mins, secs };
-		}
-
-		function timeToSeconds(mins, secs) {
-			return (parseInt(mins) || 0) * 60 + (parseInt(secs) || 0);
-		}
-
-		function formatTime(totalSeconds) {
-			const { mins, secs } = secondsToTime(totalSeconds);
-			return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-		}
-
-		function formatTimeDetailed(totalSeconds) {
-			const { mins, secs } = secondsToTime(totalSeconds);
-			const ms = Math.round((totalSeconds % 1) * 1000);
-			return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}.${ms.toString().padStart(3, "0")}`;
-		}
-
-		const parseDuration = (str) => {
-			if (!str) return 0;
-			const minMatch = str.match(/(\d+)\s*min/);
-			const hrMatch = str.match(/(\d+)\s*hr/);
-			let m = 0;
-			if (hrMatch) m += parseInt(hrMatch[1]) * 60;
-			if (minMatch) m += parseInt(minMatch[1]);
-			return m > 0 ? m * 60 : 0;
-		};
-
-		function getTypes() {
-			return Array.from(document.querySelectorAll(".type-chk:checked")).map((cb) => cb.value);
-		}
-
-		function syntaxHighlight(json) {
-			if (typeof json !== "string") {
-				json = JSON.stringify(json, undefined, 2);
+			function getDefaultProvider() {
+				return localStorage.getItem("aniskip_provider_name") || "Aniskip";
 			}
-			json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-			return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-				let cls = "sh-num";
-				if (/^"/.test(match)) {
-					if (/:$/.test(match)) {
-						cls = "sh-key";
-					} else {
-						cls = "sh-str";
+
+			function saveDefaultProvider() {
+				const name = $("providerName")?.value || "Aniskip";
+				localStorage.setItem("aniskip_provider_name", name);
+				showToast("Ник сохранён по умолчанию!", "success");
+			}
+
+			let realEpisodeDuration = 1440;
+
+			function secondsToTime(totalSeconds) {
+				const mins = Math.floor(totalSeconds / 60);
+				const secs = Math.floor(totalSeconds % 60);
+				return { mins, secs };
+			}
+
+			function timeToSeconds(mins, secs) {
+				return (parseInt(mins) || 0) * 60 + (parseInt(secs) || 0);
+			}
+
+			function formatTime(totalSeconds) {
+				const { mins, secs } = secondsToTime(totalSeconds);
+				return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+			}
+
+			function formatTimeDetailed(totalSeconds) {
+				const { mins, secs } = secondsToTime(totalSeconds);
+				const ms = Math.round((totalSeconds % 1) * 1000);
+				return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}.${ms.toString().padStart(3, "0")}`;
+			}
+
+			const parseDuration = (str) => {
+				if (!str) return 0;
+				const minMatch = str.match(/(\d+)\s*min/);
+				const hrMatch = str.match(/(\d+)\s*hr/);
+				let m = 0;
+				if (hrMatch) m += parseInt(hrMatch[1]) * 60;
+				if (minMatch) m += parseInt(minMatch[1]);
+				return m > 0 ? m * 60 : 0;
+			};
+
+			function getTypes() {
+				return Array.from(document.querySelectorAll(".type-chk:checked")).map((cb) => cb.value);
+			}
+
+			function syntaxHighlight(json) {
+				if (typeof json !== "string") {
+					json = JSON.stringify(json, undefined, 2);
+				}
+				json = json.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+				return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+					let cls = "sh-num";
+					if (/^"/.test(match)) {
+						if (/:$/.test(match)) {
+							cls = "sh-key";
+						} else {
+							cls = "sh-str";
+						}
+					} else if (/true|false/.test(match)) {
+						cls = "sh-bool";
+					} else if (/null/.test(match)) {
+						cls = "sh-null";
 					}
-				} else if (/true|false/.test(match)) {
-					cls = "sh-bool";
-				} else if (/null/.test(match)) {
-					cls = "sh-null";
-				}
-				return '<span class="' + cls + '">' + match + "</span>";
-			});
-		}
+					return '<span class="' + cls + '">' + match + "</span>";
+				});
+			}
 
-		function showToast(message, type = "success") {
-			const existing = document.querySelector(".toast");
-			if (existing) existing.remove();
+			function showToast(message, type = "success") {
+				const existing = document.querySelector(".toast");
+				if (existing) existing.remove();
 
-			const toast = document.createElement("div");
-			toast.className = `toast ${type}`;
-			toast.textContent = message;
-			document.body.appendChild(toast);
+				const toast = document.createElement("div");
+				toast.className = `toast ${type}`;
+				toast.textContent = message;
+				document.body.appendChild(toast);
 
-			setTimeout(() => toast.remove(), 3000);
-		}
+				setTimeout(() => toast.remove(), 3000);
+			}
 
-		function clearLog() {
-			$("gridContainer").innerHTML = "";
-			$("codeOutput").innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg><p>Консоль очищена</p></div>';
-			$("codeLabel").innerText = "Терминал";
-			$("resultTitle").innerText = "Консоль";
-		}
+			function clearLog() {
+				$("gridContainer").innerHTML = "";
+				$("codeOutput").innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg><p>Консоль очищена</p></div>';
+				$("codeLabel").innerText = "Терминал";
+				$("resultTitle").innerText = "Консоль";
+			}
 
-		async function searchJikan() {
-			const q = $("searchTerm").value;
-			const resultsWrapper = $("searchResults");
-			const resultsList = $("searchResultsList");
+			async function searchJikan() {
+				const q = $("searchTerm").value;
+				const resultsWrapper = $("searchResults");
+				const resultsList = $("searchResultsList");
 
-			if (!q) return;
+				if (!q) return;
 
-			resultsWrapper.classList.add("active");
-			resultsList.innerHTML = '<div style="padding:1rem; text-align:center; color:var(--muted-foreground); font-size:0.8rem;">Загрузка...</div>';
+				resultsWrapper.classList.add("active");
+				resultsList.innerHTML = '<div style="padding:1rem; text-align:center; color:var(--muted-foreground); font-size:0.8rem;">Загрузка...</div>';
 
-			try {
-				const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}&limit=5`);
-				const json = await res.json();
-				resultsList.innerHTML = "";
+				try {
+					const res = await fetch(`https://api.jikan.moe/v4/anime?q=${encodeURIComponent(q)}&limit=5`);
+					const json = await res.json();
+					resultsList.innerHTML = "";
 
-				if (!json.data || json.data.length === 0) {
-					resultsList.innerHTML = '<div style="padding:1rem; text-align:center; color:var(--muted-foreground)">Ничего не найдено</div>';
-					setTimeout(() => resultsWrapper.classList.remove("active"), 2000);
-					return;
-				}
+					if (!json.data || json.data.length === 0) {
+						resultsList.innerHTML = '<div style="padding:1rem; text-align:center; color:var(--muted-foreground)">Ничего не найдено</div>';
+						setTimeout(() => resultsWrapper.classList.remove("active"), 2000);
+						return;
+					}
 
-				json.data.forEach((item) => {
-					const dur = parseDuration(item.duration);
-					const totalEps = item.episodes || "?";
+					json.data.forEach((item) => {
+						const dur = parseDuration(item.duration);
+						const totalEps = item.episodes || "?";
 
-					const div = document.createElement("div");
-					div.className = "search-item";
-					div.innerHTML = `
+						const div = document.createElement("div");
+						div.className = "search-item";
+						div.innerHTML = `
 							<img src="${item.images.jpg.small_image_url}">
 							<div class="search-text">
 								<b>${item.title}</b>
 								<span>MAL: ${item.mal_id} • Ep: ${totalEps} • ${dur}s</span>
 							</div>
 						`;
-					div.onclick = () => {
-						$("malId").value = item.mal_id;
-						realEpisodeDuration = dur || 1440;
-						if (item.episodes) $("seasonEnd").value = item.episodes;
-						resultsWrapper.classList.remove("active");
-					};
-					resultsList.appendChild(div);
-				});
-			} catch (e) {
-				resultsList.innerHTML = `<div style="padding:0.5rem; color:var(--destructive)">Ошибка: ${e.message}</div>`;
-			}
-		}
-
-		async function fetchSingle() {
-			const malId = $("malId").value;
-			const epNum = $("epNum").value;
-			const epDur = $("epDur").value;
-			const types = getTypes();
-
-			if (types.length === 0) {
-				alert("Выберите типы пропуска");
-				return;
-			}
-
-			const codeOut = $("codeOutput");
-			codeOut.innerHTML = '<div style="padding:1rem; color:var(--muted-foreground)">Загрузка...</div>';
-
-			if (typeof expandSheet === "function") expandSheet();
-
-			const params = new URLSearchParams();
-			types.forEach((t) => params.append("types", t));
-			params.append("episodeLength", epDur);
-
-			const url = `${ANISKIP_BASE}/${malId}/${epNum}?${params.toString()}`;
-
-			try {
-				const res = await fetch(url);
-				const data = await res.json();
-
-				$("gridContainer").innerHTML = "";
-				$("resultTitle").innerText = `Результат Ep ${epNum}`;
-				$("codeLabel").innerText = `GET ${res.status}`;
-
-				if (data.found && data.results && data.results.length > 0) {
-					renderSkipCards(data.results, epNum);
-				} else {
-					codeOut.innerHTML = `<pre>${syntaxHighlight(data)}</pre>`;
+						div.onclick = () => {
+							$("malId").value = item.mal_id;
+							realEpisodeDuration = dur || 1440;
+							if (item.episodes) $("seasonEnd").value = item.episodes;
+							resultsWrapper.classList.remove("active");
+						};
+						resultsList.appendChild(div);
+					});
+				} catch (e) {
+					resultsList.innerHTML = `<div style="padding:0.5rem; color:var(--destructive)">Ошибка: ${e.message}</div>`;
 				}
-			} catch (e) {
-				codeOut.innerHTML = `<span style="color:var(--destructive)">Error: ${e.message}</span>`;
 			}
-		}
 
-		function renderSkipCards(results, epNum) {
-			const codeOut = $("codeOutput");
+			async function fetchSingle() {
+				const malId = $("malId").value;
+				const epNum = $("epNum").value;
+				const epDur = $("epDur").value;
+				const types = getTypes();
 
-			let html = `<div class="tabs">
+				if (types.length === 0) {
+					alert("Выберите типы пропуска");
+					return;
+				}
+
+				const codeOut = $("codeOutput");
+				codeOut.innerHTML = '<div style="padding:1rem; color:var(--muted-foreground)">Загрузка...</div>';
+
+				if (typeof expandSheet === "function") expandSheet();
+
+				const params = new URLSearchParams();
+				types.forEach((t) => params.append("types", t));
+				params.append("episodeLength", epDur);
+
+				const url = `${ANISKIP_BASE}/${malId}/${epNum}?${params.toString()}`;
+
+				try {
+					const res = await fetch(url);
+					const data = await res.json();
+
+					$("gridContainer").innerHTML = "";
+					$("resultTitle").innerText = `Результат Ep ${epNum}`;
+					$("codeLabel").innerText = `GET ${res.status}`;
+
+					if (data.found && data.results && data.results.length > 0) {
+						renderSkipCards(data.results, epNum);
+					} else {
+						codeOut.innerHTML = `<pre>${syntaxHighlight(data)}</pre>`;
+					}
+				} catch (e) {
+					codeOut.innerHTML = `<span style="color:var(--destructive)">Error: ${e.message}</span>`;
+				}
+			}
+
+			function renderSkipCards(results, epNum) {
+				const codeOut = $("codeOutput");
+
+				let html = `<div class="tabs">
 				<div class="tab active" onclick="switchTab('cards')">Карточки</div>
 				<div class="tab" onclick="switchTab('json')">JSON</div>
 				<div class="tab" onclick="switchTab('editor')">Редактор</div>
 			</div>
 			<div id="tabCards" class="tab-content active">`;
 
-			results.forEach((skip) => {
-				const typeClass = skip.skipType.replace("mixed-", "");
-				html += `
+				results.forEach((skip) => {
+					const typeClass = skip.skipType.replace("mixed-", "");
+					html += `
 				<div class="skip-card">
 					<div class="skip-card-header">
 						<span class="skip-card-type ${typeClass}">${skip.skipType.toUpperCase()}</span>
@@ -2104,9 +2088,9 @@
 						</button>
 					</div>
 				</div>`;
-			});
+				});
 
-			html += `</div>
+				html += `</div>
 			<div id="tabJson" class="tab-content">
 				<pre>${syntaxHighlight({ found: true, results })}</pre>
 			</div>
@@ -2114,54 +2098,54 @@
 				${renderSkipEditor(epNum)}
 			</div>`;
 
-			codeOut.innerHTML = html;
-			initSkipEditor();
-		}
-
-		function switchTab(tabName) {
-			document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
-			document.querySelectorAll(".tab-content").forEach((t) => t.classList.remove("active"));
-
-			event.target.classList.add("active");
-			$(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add("active");
-
-			if (tabName === "editor") {
+				codeOut.innerHTML = html;
 				initSkipEditor();
 			}
-		}
 
-		async function voteSkip(skipId, voteType, btn) {
-			try {
-				const res = await fetch(`${ANISKIP_VOTE_BASE}/${skipId}`, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ voteType }),
-				});
+			function switchTab(tabName) {
+				document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
+				document.querySelectorAll(".tab-content").forEach((t) => t.classList.remove("active"));
 
-				if (res.status === 429) {
-					showToast("Превышен лимит голосов", "error");
-					return;
+				event.target.classList.add("active");
+				$(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add("active");
+
+				if (tabName === "editor") {
+					initSkipEditor();
 				}
+			}
 
-				const data = await res.json();
-
-				btn.classList.add("voted");
-				btn.closest(".vote-container")
-					.querySelectorAll(".vote-btn")
-					.forEach((b) => {
-						if (b !== btn) b.style.opacity = "0.5";
+			async function voteSkip(skipId, voteType, btn) {
+				try {
+					const res = await fetch(`${ANISKIP_VOTE_BASE}/${skipId}`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({ voteType }),
 					});
 
-				showToast(voteType === "upvote" ? "Спасибо за голос!" : "Голос учтён");
-			} catch (e) {
-				showToast("Ошибка при голосовании", "error");
+					if (res.status === 429) {
+						showToast("Превышен лимит голосов", "error");
+						return;
+					}
+
+					const data = await res.json();
+
+					btn.classList.add("voted");
+					btn.closest(".vote-container")
+						.querySelectorAll(".vote-btn")
+						.forEach((b) => {
+							if (b !== btn) b.style.opacity = "0.5";
+						});
+
+					showToast(voteType === "upvote" ? "Спасибо за голос!" : "Голос учтён");
+				} catch (e) {
+					showToast("Ошибка при голосовании", "error");
+				}
 			}
-		}
 
-		function renderSkipEditor(epNum) {
-			const epDur = realEpisodeDuration || 1440;
+			function renderSkipEditor(epNum) {
+				const epDur = realEpisodeDuration || 1440;
 
-			return `
+				return `
 			<div class="skip-editor">
 				<div class="skip-editor-header">
 					<div class="skip-editor-title">
@@ -2242,293 +2226,293 @@
 					Отправить в AniSkip
 				</button>
 			</div>`;
-		}
-
-		let selectedSkipType = "op";
-		let isDragging = null;
-		let epDuration = 1440;
-
-		function selectSkipType(type, btn) {
-			selectedSkipType = type;
-			document.querySelectorAll(".skip-type-btn").forEach((b) => {
-				b.classList.remove("active");
-			});
-			btn.classList.add("active");
-		}
-
-		function initSkipEditor() {
-			epDuration = realEpisodeDuration || 1440;
-
-			const track = $("timelineTrack");
-			const selection = $("timelineSelection");
-			const handleStart = $("handleStart");
-			const handleEnd = $("handleEnd");
-
-			if (!track) return;
-
-			let startPercent = 0;
-			let endPercent = 10;
-
-			function updateFromInputs() {
-				const startTime = timeToSeconds($("startMins").value, $("startSecs").value);
-				const endTime = timeToSeconds($("endMins").value, $("endSecs").value);
-
-				startPercent = (startTime / epDuration) * 100;
-				endPercent = (endTime / epDuration) * 100;
-
-				startPercent = Math.max(0, Math.min(100, startPercent));
-				endPercent = Math.max(startPercent + 1, Math.min(100, endPercent));
-
-				updateSelection();
 			}
 
-			function updateInputsFromPercent() {
-				const startTime = (startPercent / 100) * epDuration;
-				const endTime = (endPercent / 100) * epDuration;
+			let selectedSkipType = "op";
+			let isDragging = null;
+			let epDuration = 1440;
 
-				const startParts = secondsToTime(startTime);
-				const endParts = secondsToTime(endTime);
-
-				$("startMins").value = startParts.mins;
-				$("startSecs").value = startParts.secs;
-				$("endMins").value = endParts.mins;
-				$("endSecs").value = endParts.secs;
-
-				$("selectionDisplay").textContent = `${formatTime(startTime)} → ${formatTime(endTime)}`;
+			function selectSkipType(type, btn) {
+				selectedSkipType = type;
+				document.querySelectorAll(".skip-type-btn").forEach((b) => {
+					b.classList.remove("active");
+				});
+				btn.classList.add("active");
 			}
 
-			function updateSelection() {
-				selection.style.left = startPercent + "%";
-				selection.style.width = endPercent - startPercent + "%";
+			function initSkipEditor() {
+				epDuration = realEpisodeDuration || 1440;
 
-				const startTime = (startPercent / 100) * epDuration;
-				const endTime = (endPercent / 100) * epDuration;
-				$("selectionDisplay").textContent = `${formatTime(startTime)} → ${formatTime(endTime)}`;
-			}
+				const track = $("timelineTrack");
+				const selection = $("timelineSelection");
+				const handleStart = $("handleStart");
+				const handleEnd = $("handleEnd");
 
-			let activePointerId = null;
-			let draggingElement = null;
+				if (!track) return;
 
-			function onPointerDown(e, type, element) {
-				e.preventDefault();
-				isDragging = type;
-				activePointerId = e.pointerId;
-				draggingElement = element;
+				let startPercent = 0;
+				let endPercent = 10;
 
-				element.setPointerCapture(e.pointerId);
+				function updateFromInputs() {
+					const startTime = timeToSeconds($("startMins").value, $("startSecs").value);
+					const endTime = timeToSeconds($("endMins").value, $("endSecs").value);
 
-				element.addEventListener("pointermove", onPointerMove);
-				element.addEventListener("pointerup", onPointerUp);
-				element.addEventListener("pointercancel", onPointerUp);
-				element.addEventListener("lostpointercapture", onPointerUp);
-			}
+					startPercent = (startTime / epDuration) * 100;
+					endPercent = (endTime / epDuration) * 100;
 
-			function onPointerMove(e) {
-				if (!isDragging || e.pointerId !== activePointerId) return;
+					startPercent = Math.max(0, Math.min(100, startPercent));
+					endPercent = Math.max(startPercent + 1, Math.min(100, endPercent));
 
-				const rect = track.getBoundingClientRect();
-				let percent = ((e.clientX - rect.left) / rect.width) * 100;
-				percent = Math.max(0, Math.min(100, percent));
-
-				if (isDragging === "start") {
-					startPercent = Math.min(percent, endPercent - 2);
-				} else if (isDragging === "end") {
-					endPercent = Math.max(percent, startPercent + 2);
-				} else if (isDragging === "move") {
-					const width = endPercent - startPercent;
-					let newStart = percent - width / 2;
-
-					if (newStart < 0) {
-						newStart = 0;
-					} else if (newStart + width > 100) {
-						newStart = 100 - width;
-					}
-
-					startPercent = newStart;
-					endPercent = newStart + width;
+					updateSelection();
 				}
 
-				updateSelection();
-				updateInputsFromPercent();
-			}
+				function updateInputsFromPercent() {
+					const startTime = (startPercent / 100) * epDuration;
+					const endTime = (endPercent / 100) * epDuration;
 
-			function onPointerUp(e) {
-				if (e.pointerId !== activePointerId) return;
+					const startParts = secondsToTime(startTime);
+					const endParts = secondsToTime(endTime);
 
-				isDragging = null;
-				activePointerId = null;
+					$("startMins").value = startParts.mins;
+					$("startSecs").value = startParts.secs;
+					$("endMins").value = endParts.mins;
+					$("endSecs").value = endParts.secs;
 
-				if (draggingElement) {
-					draggingElement.removeEventListener("pointermove", onPointerMove);
-					draggingElement.removeEventListener("pointerup", onPointerUp);
-					draggingElement.removeEventListener("pointercancel", onPointerUp);
-					draggingElement.removeEventListener("lostpointercapture", onPointerUp);
-
-					if (draggingElement.hasPointerCapture && draggingElement.hasPointerCapture(e.pointerId)) {
-						draggingElement.releasePointerCapture(e.pointerId);
-					}
-					draggingElement = null;
+					$("selectionDisplay").textContent = `${formatTime(startTime)} → ${formatTime(endTime)}`;
 				}
-			}
 
-			handleStart.addEventListener("pointerdown", (e) => onPointerDown(e, "start", handleStart));
-			handleEnd.addEventListener("pointerdown", (e) => onPointerDown(e, "end", handleEnd));
-			selection.addEventListener("pointerdown", (e) => {
-				if (e.target === selection) onPointerDown(e, "move", selection);
-			});
+				function updateSelection() {
+					selection.style.left = startPercent + "%";
+					selection.style.width = endPercent - startPercent + "%";
 
-			[handleStart, handleEnd, selection].forEach((el) => {
-				el.style.touchAction = "none";
-			});
+					const startTime = (startPercent / 100) * epDuration;
+					const endTime = (endPercent / 100) * epDuration;
+					$("selectionDisplay").textContent = `${formatTime(startTime)} → ${formatTime(endTime)}`;
+				}
 
-			track.addEventListener("click", (e) => {
-				if (e.target === track) {
+				let activePointerId = null;
+				let draggingElement = null;
+
+				function onPointerDown(e, type, element) {
+					e.preventDefault();
+					isDragging = type;
+					activePointerId = e.pointerId;
+					draggingElement = element;
+
+					element.setPointerCapture(e.pointerId);
+
+					element.addEventListener("pointermove", onPointerMove);
+					element.addEventListener("pointerup", onPointerUp);
+					element.addEventListener("pointercancel", onPointerUp);
+					element.addEventListener("lostpointercapture", onPointerUp);
+				}
+
+				function onPointerMove(e) {
+					if (!isDragging || e.pointerId !== activePointerId) return;
+
 					const rect = track.getBoundingClientRect();
-					const percent = ((e.clientX - rect.left) / rect.width) * 100;
-					const width = endPercent - startPercent;
+					let percent = ((e.clientX - rect.left) / rect.width) * 100;
+					percent = Math.max(0, Math.min(100, percent));
 
-					startPercent = Math.max(0, percent - width / 2);
-					endPercent = Math.min(100, startPercent + width);
-					if (startPercent + width > 100) {
-						startPercent = 100 - width;
-						endPercent = 100;
+					if (isDragging === "start") {
+						startPercent = Math.min(percent, endPercent - 2);
+					} else if (isDragging === "end") {
+						endPercent = Math.max(percent, startPercent + 2);
+					} else if (isDragging === "move") {
+						const width = endPercent - startPercent;
+						let newStart = percent - width / 2;
+
+						if (newStart < 0) {
+							newStart = 0;
+						} else if (newStart + width > 100) {
+							newStart = 100 - width;
+						}
+
+						startPercent = newStart;
+						endPercent = newStart + width;
 					}
 
 					updateSelection();
 					updateInputsFromPercent();
 				}
-			});
 
-			["startMins", "startSecs", "endMins", "endSecs"].forEach((id) => {
-				const el = $(id);
-				if (el) {
-					el.addEventListener("input", updateFromInputs);
-					el.addEventListener("change", updateFromInputs);
+				function onPointerUp(e) {
+					if (e.pointerId !== activePointerId) return;
+
+					isDragging = null;
+					activePointerId = null;
+
+					if (draggingElement) {
+						draggingElement.removeEventListener("pointermove", onPointerMove);
+						draggingElement.removeEventListener("pointerup", onPointerUp);
+						draggingElement.removeEventListener("pointercancel", onPointerUp);
+						draggingElement.removeEventListener("lostpointercapture", onPointerUp);
+
+						if (draggingElement.hasPointerCapture && draggingElement.hasPointerCapture(e.pointerId)) {
+							draggingElement.releasePointerCapture(e.pointerId);
+						}
+						draggingElement = null;
+					}
 				}
-			});
 
-			updateSelection();
-			updateInputsFromPercent();
-		}
-
-		async function submitSkipTime() {
-			const malId = $("malId").value;
-			const epNum = $("epNum").value;
-			const providerName = $("providerName").value || "Aniskip";
-			const submitterId = getSubmitterId();
-
-			const startTime = timeToSeconds($("startMins").value, $("startSecs").value);
-			const endTime = timeToSeconds($("endMins").value, $("endSecs").value);
-			const episodeLength = realEpisodeDuration || 1440;
-
-			if (!malId || !epNum) {
-				showToast("Укажите MAL ID и номер эпизода", "error");
-				return;
-			}
-
-			if (startTime >= endTime) {
-				showToast("Время начала должно быть меньше времени конца", "error");
-				return;
-			}
-
-			const payload = {
-				skipType: selectedSkipType,
-				providerName,
-				startTime: parseFloat(startTime.toFixed(3)),
-				endTime: parseFloat(endTime.toFixed(3)),
-				episodeLength: parseFloat(episodeLength.toFixed(3)),
-				submitterId,
-			};
-
-			try {
-				const res = await fetch(`${ANISKIP_BASE}/${malId}/${epNum}`, {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(payload),
+				handleStart.addEventListener("pointerdown", (e) => onPointerDown(e, "start", handleStart));
+				handleEnd.addEventListener("pointerdown", (e) => onPointerDown(e, "end", handleEnd));
+				selection.addEventListener("pointerdown", (e) => {
+					if (e.target === selection) onPointerDown(e, "move", selection);
 				});
 
-				const data = await res.json();
+				[handleStart, handleEnd, selection].forEach((el) => {
+					el.style.touchAction = "none";
+				});
 
-				if (res.ok) {
-					showToast("✓ Успешно отправлено в AniSkip!", "success");
-					$("codeOutput").innerHTML = `
+				track.addEventListener("click", (e) => {
+					if (e.target === track) {
+						const rect = track.getBoundingClientRect();
+						const percent = ((e.clientX - rect.left) / rect.width) * 100;
+						const width = endPercent - startPercent;
+
+						startPercent = Math.max(0, percent - width / 2);
+						endPercent = Math.min(100, startPercent + width);
+						if (startPercent + width > 100) {
+							startPercent = 100 - width;
+							endPercent = 100;
+						}
+
+						updateSelection();
+						updateInputsFromPercent();
+					}
+				});
+
+				["startMins", "startSecs", "endMins", "endSecs"].forEach((id) => {
+					const el = $(id);
+					if (el) {
+						el.addEventListener("input", updateFromInputs);
+						el.addEventListener("change", updateFromInputs);
+					}
+				});
+
+				updateSelection();
+				updateInputsFromPercent();
+			}
+
+			async function submitSkipTime() {
+				const malId = $("malId").value;
+				const epNum = $("epNum").value;
+				const providerName = $("providerName").value || "Aniskip";
+				const submitterId = getSubmitterId();
+
+				const startTime = timeToSeconds($("startMins").value, $("startSecs").value);
+				const endTime = timeToSeconds($("endMins").value, $("endSecs").value);
+				const episodeLength = realEpisodeDuration || 1440;
+
+				if (!malId || !epNum) {
+					showToast("Укажите MAL ID и номер эпизода", "error");
+					return;
+				}
+
+				if (startTime >= endTime) {
+					showToast("Время начала должно быть меньше времени конца", "error");
+					return;
+				}
+
+				const payload = {
+					skipType: selectedSkipType,
+					providerName,
+					startTime: parseFloat(startTime.toFixed(3)),
+					endTime: parseFloat(endTime.toFixed(3)),
+					episodeLength: parseFloat(episodeLength.toFixed(3)),
+					submitterId,
+				};
+
+				try {
+					const res = await fetch(`${ANISKIP_BASE}/${malId}/${epNum}`, {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(payload),
+					});
+
+					const data = await res.json();
+
+					if (res.ok) {
+						showToast("✓ Успешно отправлено в AniSkip!", "success");
+						$("codeOutput").innerHTML = `
 						<div style="padding:1rem; color:var(--success); border:1px solid var(--success); border-radius:var(--radius); margin-bottom:1rem;">
 							✓ Skip time успешно добавлен!
 						</div>
 						<pre>${syntaxHighlight(data)}</pre>
 					`;
-				} else {
-					showToast(`Ошибка: ${data.message || res.status}`, "error");
-					$("codeOutput").innerHTML = `<pre>${syntaxHighlight(data)}</pre>`;
-				}
-			} catch (e) {
-				showToast(`Ошибка сети: ${e.message}`, "error");
-			}
-		}
-
-		async function fetchSeason() {
-			const malId = $("malId").value;
-			const start = parseInt($("seasonStart").value);
-			const end = parseInt($("seasonEnd").value);
-			const epDur = $("epDur").value;
-			const types = getTypes();
-
-			if (types.length === 0) {
-				alert("Выберите типы");
-				return;
-			}
-			if (end < start) return;
-
-			$("resultTitle").innerText = `Сезон (${start} - ${end})`;
-			$("codeOutput").innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg><p>Выберите эпизод для просмотра деталей</p></div>';
-
-			if (typeof expandSheet === "function") expandSheet();
-
-			const grid = $("gridContainer");
-			grid.className = "season-grid";
-			grid.innerHTML = "";
-
-			for (let i = start; i <= end; i++) {
-				const badge = document.createElement("div");
-				badge.className = "ep-badge";
-				badge.id = `badge-${i}`;
-				badge.innerHTML = `<div class="spinner"></div>`;
-				grid.appendChild(badge);
-			}
-
-			const promises = [];
-			for (let i = start; i <= end; i++) {
-				const params = new URLSearchParams();
-				types.forEach((t) => params.append("types", t));
-				params.append("episodeLength", epDur);
-				const url = `${ANISKIP_BASE}/${malId}/${i}?${params.toString()}`;
-
-				promises.push(
-					fetch(url)
-						.then((res) => res.json())
-						.then((data) => ({ ep: i, data, found: data.found }))
-						.catch((err) => ({ ep: i, error: err })),
-				);
-			}
-
-			const results = await Promise.all(promises);
-
-			results.forEach((res) => {
-				const el = document.getElementById(`badge-${res.ep}`);
-				el.innerHTML = res.ep;
-				el.className = `ep-badge ${res.found ? "found" : "missing"}`;
-
-				el.onclick = () => {
-					document.querySelectorAll(".ep-badge").forEach((b) => b.classList.remove("active"));
-					el.classList.add("active");
-
-					$("codeLabel").innerText = `Эпизод ${res.ep}`;
-					$("epNum").value = res.ep;
-
-					if (res.data && res.data.results && res.data.results.length > 0) {
-						renderSkipCards(res.data.results, res.ep);
 					} else {
-						$("codeOutput").innerHTML = `
+						showToast(`Ошибка: ${data.message || res.status}`, "error");
+						$("codeOutput").innerHTML = `<pre>${syntaxHighlight(data)}</pre>`;
+					}
+				} catch (e) {
+					showToast(`Ошибка сети: ${e.message}`, "error");
+				}
+			}
+
+			async function fetchSeason() {
+				const malId = $("malId").value;
+				const start = parseInt($("seasonStart").value);
+				const end = parseInt($("seasonEnd").value);
+				const epDur = $("epDur").value;
+				const types = getTypes();
+
+				if (types.length === 0) {
+					alert("Выберите типы");
+					return;
+				}
+				if (end < start) return;
+
+				$("resultTitle").innerText = `Сезон (${start} - ${end})`;
+				$("codeOutput").innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg><p>Выберите эпизод для просмотра деталей</p></div>';
+
+				if (typeof expandSheet === "function") expandSheet();
+
+				const grid = $("gridContainer");
+				grid.className = "season-grid";
+				grid.innerHTML = "";
+
+				for (let i = start; i <= end; i++) {
+					const badge = document.createElement("div");
+					badge.className = "ep-badge";
+					badge.id = `badge-${i}`;
+					badge.innerHTML = `<div class="spinner"></div>`;
+					grid.appendChild(badge);
+				}
+
+				const promises = [];
+				for (let i = start; i <= end; i++) {
+					const params = new URLSearchParams();
+					types.forEach((t) => params.append("types", t));
+					params.append("episodeLength", epDur);
+					const url = `${ANISKIP_BASE}/${malId}/${i}?${params.toString()}`;
+
+					promises.push(
+						fetch(url)
+							.then((res) => res.json())
+							.then((data) => ({ ep: i, data, found: data.found }))
+							.catch((err) => ({ ep: i, error: err })),
+					);
+				}
+
+				const results = await Promise.all(promises);
+
+				results.forEach((res) => {
+					const el = document.getElementById(`badge-${res.ep}`);
+					el.innerHTML = res.ep;
+					el.className = `ep-badge ${res.found ? "found" : "missing"}`;
+
+					el.onclick = () => {
+						document.querySelectorAll(".ep-badge").forEach((b) => b.classList.remove("active"));
+						el.classList.add("active");
+
+						$("codeLabel").innerText = `Эпизод ${res.ep}`;
+						$("epNum").value = res.ep;
+
+						if (res.data && res.data.results && res.data.results.length > 0) {
+							renderSkipCards(res.data.results, res.ep);
+						} else {
+							$("codeOutput").innerHTML = `
 							<div class="tabs">
 								<div class="tab active" onclick="switchTab('json')">JSON</div>
 								<div class="tab" onclick="switchTab('editor')">Добавить</div>
@@ -2540,232 +2524,231 @@
 								${renderSkipEditor(res.ep)}
 							</div>
 						`;
-					}
-				};
+						}
+					};
+				});
+			}
+
+			function copyToClipboard() {
+				const text = $("codeOutput").innerText;
+				navigator.clipboard.writeText(text).then(() => {
+					const btn = document.querySelector(".code-actions button");
+					const orig = btn.innerText;
+					btn.innerText = "Скопировано!";
+					setTimeout(() => (btn.innerText = orig), 1500);
+				});
+			}
+
+			document.addEventListener("click", (e) => {
+				if (!e.target.closest(".form-group")) {
+					$("searchResults").classList.remove("active");
+				}
 			});
-		}
 
-		function copyToClipboard() {
-			const text = $("codeOutput").innerText;
-			navigator.clipboard.writeText(text).then(() => {
-				const btn = document.querySelector(".code-actions button");
-				const orig = btn.innerText;
-				btn.innerText = "Скопировано!";
-				setTimeout(() => (btn.innerText = orig), 1500);
+			$("searchTerm").addEventListener("keypress", (e) => {
+				if (e.key === "Enter") searchJikan();
 			});
-		}
 
-		document.addEventListener("click", (e) => {
-			if (!e.target.closest(".form-group")) {
-				$("searchResults").classList.remove("active");
-			}
-		});
+			(function initBottomSheet() {
+				const sheet = $("mainContent");
+				const handle = $("sheetHandle");
 
-		$("searchTerm").addEventListener("keypress", (e) => {
-			if (e.key === "Enter") searchJikan();
-		});
+				if (!sheet || !handle) return;
 
-		(function initBottomSheet() {
-			const sheet = $("mainContent");
-			const handle = $("sheetHandle");
+				const isMobile = () => window.innerWidth <= 900;
 
-			if (!sheet || !handle) return;
+				let isDragging = false;
+				let startY = 0;
+				let startHeight = 0;
+				let currentHeight = 0;
+				let lastY = 0;
+				let velocity = 0;
+				let lastTime = 0;
 
-			const isMobile = () => window.innerWidth <= 900;
+				const COLLAPSED = 40;
+				const DEFAULT_VH = 60;
+				const EXPANDED_VH = 100;
 
-			let isDragging = false;
-			let startY = 0;
-			let startHeight = 0;
-			let currentHeight = 0;
-			let lastY = 0;
-			let velocity = 0;
-			let lastTime = 0;
-
-			const COLLAPSED = 40;
-			const DEFAULT_VH = 60;
-			const EXPANDED_VH = 100;
-
-			function getViewportHeight() {
-				return window.innerHeight;
-			}
-
-			function vhToPixels(vh) {
-				return (vh / 100) * getViewportHeight();
-			}
-
-			function pixelsToVh(px) {
-				return (px / getViewportHeight()) * 100;
-			}
-
-			function setSheetHeight(height) {
-				sheet.style.height = height + "px";
-				sheet.style.maxHeight = height + "px";
-				currentHeight = height;
-
-				document.documentElement.style.setProperty("--sheet-height", height + "px");
-			}
-
-			function snapToNearest(height, velocity) {
-				const expandedHeight = vhToPixels(EXPANDED_VH);
-
-				if (Math.abs(velocity) > 0.5) {
-					return velocity > 0 ? expandedHeight : COLLAPSED;
+				function getViewportHeight() {
+					return window.innerHeight;
 				}
 
-				const midPoint = (COLLAPSED + expandedHeight) / 2;
-				return height < midPoint ? COLLAPSED : expandedHeight;
-			}
-
-			function updateSheetClass(height) {
-				const defaultHeight = vhToPixels(DEFAULT_VH);
-				const expandedHeight = vhToPixels(EXPANDED_VH);
-
-				sheet.classList.remove("expanded", "collapsed");
-
-				if (height <= COLLAPSED + 20) {
-					sheet.classList.add("collapsed");
-				} else if (height >= expandedHeight - 20) {
-					sheet.classList.add("expanded");
+				function vhToPixels(vh) {
+					return (vh / 100) * getViewportHeight();
 				}
-			}
 
-			function onDragStart(e) {
-				if (!isMobile()) return;
-
-				isDragging = true;
-				startY = e.touches ? e.touches[0].clientY : e.clientY;
-
-				startHeight = sheet.offsetHeight;
-				currentHeight = startHeight;
-
-				sheet.style.height = startHeight + "px";
-				sheet.style.maxHeight = startHeight + "px";
-				document.documentElement.style.setProperty("--sheet-height", startHeight + "px");
-
-				lastY = startY;
-				lastTime = Date.now();
-				velocity = 0;
-
-				sheet.classList.add("dragging");
-
-				sheet.classList.remove("collapsed", "expanded");
-
-				const sidebar = document.querySelector(".sidebar");
-				if (sidebar) sidebar.classList.add("no-transition");
-			}
-
-			function onDragMove(e) {
-				if (!isDragging || !isMobile()) return;
-
-				e.preventDefault();
-
-				const currentY = e.touches ? e.touches[0].clientY : e.clientY;
-				const deltaY = startY - currentY;
-				const newHeight = startHeight + deltaY;
-
-				const now = Date.now();
-				const dt = now - lastTime;
-				if (dt > 0) {
-					velocity = (lastY - currentY) / dt;
+				function pixelsToVh(px) {
+					return (px / getViewportHeight()) * 100;
 				}
-				lastY = currentY;
-				lastTime = now;
 
-				const minHeight = COLLAPSED;
-				const maxHeight = vhToPixels(100);
-				const clampedHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+				function setSheetHeight(height) {
+					sheet.style.height = height + "px";
+					sheet.style.maxHeight = height + "px";
+					currentHeight = height;
 
-				setSheetHeight(clampedHeight);
-			}
+					document.documentElement.style.setProperty("--sheet-height", height + "px");
+				}
 
-			function onDragEnd() {
-				if (!isDragging) return;
-
-				isDragging = false;
-				sheet.classList.remove("dragging");
-
-				const sidebar = document.querySelector(".sidebar");
-				if (sidebar) sidebar.classList.remove("no-transition");
-
-				const snapHeight = snapToNearest(currentHeight, velocity);
-
-				sheet.style.transition = "height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-				setSheetHeight(snapHeight);
-				updateSheetClass(snapHeight);
-
-				setTimeout(() => {
-					sheet.style.transition = "";
-				}, 300);
-			}
-
-			handle.addEventListener("touchstart", onDragStart, { passive: true });
-			document.addEventListener("touchmove", onDragMove, { passive: false });
-			document.addEventListener("touchend", onDragEnd);
-
-			handle.addEventListener("mousedown", onDragStart);
-			document.addEventListener("mousemove", (e) => {
-				if (isDragging) onDragMove(e);
-			});
-			document.addEventListener("mouseup", onDragEnd);
-
-			let lastTap = 0;
-			handle.addEventListener("touchend", (e) => {
-				const now = Date.now();
-				if (now - lastTap < 300) {
+				function snapToNearest(height, velocity) {
 					const expandedHeight = vhToPixels(EXPANDED_VH);
 
-					sheet.style.transition = "height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-
-					if (currentHeight >= expandedHeight - 50) {
-						setSheetHeight(COLLAPSED);
-						updateSheetClass(COLLAPSED);
-					} else {
-						setSheetHeight(expandedHeight);
-						updateSheetClass(expandedHeight);
+					if (Math.abs(velocity) > 0.5) {
+						return velocity > 0 ? expandedHeight : COLLAPSED;
 					}
+
+					const midPoint = (COLLAPSED + expandedHeight) / 2;
+					return height < midPoint ? COLLAPSED : expandedHeight;
+				}
+
+				function updateSheetClass(height) {
+					const defaultHeight = vhToPixels(DEFAULT_VH);
+					const expandedHeight = vhToPixels(EXPANDED_VH);
+
+					sheet.classList.remove("expanded", "collapsed");
+
+					if (height <= COLLAPSED + 20) {
+						sheet.classList.add("collapsed");
+					} else if (height >= expandedHeight - 20) {
+						sheet.classList.add("expanded");
+					}
+				}
+
+				function onDragStart(e) {
+					if (!isMobile()) return;
+
+					isDragging = true;
+					startY = e.touches ? e.touches[0].clientY : e.clientY;
+
+					startHeight = sheet.offsetHeight;
+					currentHeight = startHeight;
+
+					sheet.style.height = startHeight + "px";
+					sheet.style.maxHeight = startHeight + "px";
+					document.documentElement.style.setProperty("--sheet-height", startHeight + "px");
+
+					lastY = startY;
+					lastTime = Date.now();
+					velocity = 0;
+
+					sheet.classList.add("dragging");
+
+					sheet.classList.remove("collapsed", "expanded");
+
+					const sidebar = document.querySelector(".sidebar");
+					if (sidebar) sidebar.classList.add("no-transition");
+				}
+
+				function onDragMove(e) {
+					if (!isDragging || !isMobile()) return;
+
+					e.preventDefault();
+
+					const currentY = e.touches ? e.touches[0].clientY : e.clientY;
+					const deltaY = startY - currentY;
+					const newHeight = startHeight + deltaY;
+
+					const now = Date.now();
+					const dt = now - lastTime;
+					if (dt > 0) {
+						velocity = (lastY - currentY) / dt;
+					}
+					lastY = currentY;
+					lastTime = now;
+
+					const minHeight = COLLAPSED;
+					const maxHeight = vhToPixels(100);
+					const clampedHeight = Math.max(minHeight, Math.min(maxHeight, newHeight));
+
+					setSheetHeight(clampedHeight);
+				}
+
+				function onDragEnd() {
+					if (!isDragging) return;
+
+					isDragging = false;
+					sheet.classList.remove("dragging");
+
+					const sidebar = document.querySelector(".sidebar");
+					if (sidebar) sidebar.classList.remove("no-transition");
+
+					const snapHeight = snapToNearest(currentHeight, velocity);
+
+					sheet.style.transition = "height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+					setSheetHeight(snapHeight);
+					updateSheetClass(snapHeight);
 
 					setTimeout(() => {
 						sheet.style.transition = "";
 					}, 300);
 				}
-				lastTap = now;
-			});
 
-			window.expandSheet = function () {
-				if (!isMobile()) return;
-				const expandedHeight = vhToPixels(EXPANDED_VH);
-				sheet.style.transition = "height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-				setSheetHeight(expandedHeight);
-				updateSheetClass(expandedHeight);
-				setTimeout(() => {
-					sheet.style.transition = "";
-				}, 300);
-			};
+				handle.addEventListener("touchstart", onDragStart, { passive: true });
+				document.addEventListener("touchmove", onDragMove, { passive: false });
+				document.addEventListener("touchend", onDragEnd);
 
-			function initMobileSheet() {
-				if (isMobile()) {
-					setSheetHeight(COLLAPSED);
-					updateSheetClass(COLLAPSED);
-				}
-			}
+				handle.addEventListener("mousedown", onDragStart);
+				document.addEventListener("mousemove", (e) => {
+					if (isDragging) onDragMove(e);
+				});
+				document.addEventListener("mouseup", onDragEnd);
 
-			window.addEventListener("resize", () => {
-				if (isMobile()) {
-					if (sheet.classList.contains("expanded")) {
-						setSheetHeight(vhToPixels(EXPANDED_VH));
-					} else {
-						setSheetHeight(COLLAPSED);
+				let lastTap = 0;
+				handle.addEventListener("touchend", (e) => {
+					const now = Date.now();
+					if (now - lastTap < 300) {
+						const expandedHeight = vhToPixels(EXPANDED_VH);
+
+						sheet.style.transition = "height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+
+						if (currentHeight >= expandedHeight - 50) {
+							setSheetHeight(COLLAPSED);
+							updateSheetClass(COLLAPSED);
+						} else {
+							setSheetHeight(expandedHeight);
+							updateSheetClass(expandedHeight);
+						}
+
+						setTimeout(() => {
+							sheet.style.transition = "";
+						}, 300);
 					}
-				} else {
-					sheet.style.height = "";
-					sheet.style.maxHeight = "";
-					sheet.classList.remove("expanded", "collapsed", "dragging");
+					lastTap = now;
+				});
+
+				window.expandSheet = function () {
+					if (!isMobile()) return;
+					const expandedHeight = vhToPixels(EXPANDED_VH);
+					sheet.style.transition = "height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+					setSheetHeight(expandedHeight);
+					updateSheetClass(expandedHeight);
+					setTimeout(() => {
+						sheet.style.transition = "";
+					}, 300);
+				};
+
+				function initMobileSheet() {
+					if (isMobile()) {
+						setSheetHeight(COLLAPSED);
+						updateSheetClass(COLLAPSED);
+					}
 				}
-			});
 
-			initMobileSheet();
-		})();
-	</script>
-</body>
+				window.addEventListener("resize", () => {
+					if (isMobile()) {
+						if (sheet.classList.contains("expanded")) {
+							setSheetHeight(vhToPixels(EXPANDED_VH));
+						} else {
+							setSheetHeight(COLLAPSED);
+						}
+					} else {
+						sheet.style.height = "";
+						sheet.style.maxHeight = "";
+						sheet.classList.remove("expanded", "collapsed", "dragging");
+					}
+				});
 
+				initMobileSheet();
+			})();
+		</script>
+	</body>
 </html>
