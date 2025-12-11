@@ -800,7 +800,7 @@
 			}
 
 			.code-scroll {
-				padding: 0.875rem;
+				padding: 0 0.8rem 0.8rem 0.8rem;
 				font-size: 0.75rem;
 			}
 
@@ -1110,12 +1110,12 @@
 				border-right: none;
 				max-height: none;
 				min-height: 0;
-				height: calc(100vh - var(--sheet-height, 40px));
-				height: calc(100dvh - var(--sheet-height, 40px));
-				padding-bottom: 1rem;
+				height: 100vh;
+				height: 100dvh;
+				padding-bottom: var(--sheet-height, 40px);
 				overflow-y: auto;
 				overflow-x: hidden;
-				transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+				transition: padding-bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 			}
 
 			.sidebar::before {
@@ -1123,7 +1123,7 @@
 			}
 
 			.sidebar.no-transition {
-				transition: none;
+				transition: none !important;
 			}
 
 			.layout {
@@ -1313,7 +1313,7 @@
 			cursor: ew-resize;
 			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 			transition: transform 0.1s ease;
-			z-index: 20;
+			z-index: 10;
 		}
 
 		.timeline-handle::after {
@@ -1620,7 +1620,7 @@
 			margin-bottom: 0;
 			position: sticky;
 			top: 0;
-			z-index: 10;
+			z-index: 20;
 			background: var(--background);
 		}
 
