@@ -2536,8 +2536,8 @@
 					} else {
 						$("codeOutput").innerHTML = `
 							<div class="tabs">
-								<div class="tab active" onclick="switchTab('json')">JSON</div>
-								<div class="tab" onclick="switchTab('editor')">Добавить</div>
+								<div class="tab active" onclick="switchTab('editor')">Добавить</div>
+								<div class="tab" onclick="switchTab('json')">JSON</div>
 							</div>
 							<div id="tabJson" class="tab-content active">
 								<pre>${syntaxHighlight(res.data || res.error)}</pre>
