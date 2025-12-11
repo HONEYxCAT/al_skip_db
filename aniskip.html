@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Aniskip V2</title>
+		<title>Aniskip</title>
 
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -64,6 +64,7 @@
 			* {
 				box-sizing: border-box;
 			}
+
 			@media (max-width: 600px) {
 				*,
 				*::before,
@@ -731,22 +732,6 @@
 			}
 
 			@media (max-width: 900px) {
-				.layout {
-					grid-template-columns: 1fr;
-					grid-template-rows: auto 1fr;
-				}
-
-				.sidebar {
-					border-right: none;
-					max-height: 45vh;
-				}
-
-				.main-content {
-					padding: 1.25rem 1rem;
-				}
-			}
-
-			@media (max-width: 600px) {
 				body {
 					font-size: 0.8125rem;
 				}
@@ -997,7 +982,7 @@
 				}
 
 				.time-input-fields {
-					justify-content: space-between;
+					justify-content: flex-start;
 				}
 
 				.skip-type-selector {
@@ -1110,14 +1095,41 @@
 				}
 			}
 
-			@media (max-width: 600px) {
+			@media (max-width: 900px) {
+				.layout {
+					grid-template-columns: 1fr;
+					grid-template-rows: auto 1fr;
+				}
+
+				.sidebar {
+					border-right: none;
+					max-height: none;
+					height: calc(100vh - var(--sheet-height, 40px));
+					height: calc(100dvh - var(--sheet-height, 40px));
+					padding-bottom: 1rem;
+					overflow-y: auto;
+					transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+				}
+
+				.sidebar.no-transition {
+					transition: none;
+				}
+
+				.layout {
+					height: 100vh;
+					height: 100dvh;
+					display: flex;
+					flex-direction: column;
+					overflow: hidden;
+				}
+
 				.main-content {
 					position: fixed;
 					bottom: 0;
 					left: 0;
 					right: 0;
-					height: 60vh;
-					max-height: 60vh;
+					height: 40px;
+					max-height: 40px;
 					border-radius: 1.25rem 1.25rem 0 0;
 					border-top: 1px solid var(--border);
 					box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
@@ -1126,9 +1138,8 @@
 						max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 					z-index: 50;
 					padding-top: 0;
-
+					padding: 0 1rem 1rem;
 					scrollbar-width: none;
-
 					-ms-overflow-style: none;
 				}
 
@@ -1183,27 +1194,6 @@
 				.sheet-handle:active .sheet-handle-bar {
 					opacity: 0.8;
 					width: 44px;
-				}
-
-				.sidebar {
-					max-height: none;
-					height: calc(100vh - var(--sheet-height, 60vh));
-					height: calc(100dvh - var(--sheet-height, 60vh));
-					padding-bottom: 1rem;
-					overflow-y: auto;
-					transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-				}
-
-				.sidebar.no-transition {
-					transition: none;
-				}
-
-				.layout {
-					height: 100vh;
-					height: 100dvh;
-					display: flex;
-					flex-direction: column;
-					overflow: hidden;
 				}
 			}
 
@@ -1615,7 +1605,11 @@
 			.tabs {
 				display: flex;
 				border-bottom: 1px solid var(--border-subtle);
-				margin-bottom: 1rem;
+				margin-bottom: 0;
+				position: sticky;
+				top: 0;
+				z-index: 10;
+				background: var(--background);
 			}
 
 			.tab {
@@ -1640,6 +1634,7 @@
 
 			.tab-content {
 				display: none;
+				padding-top: 1rem;
 			}
 
 			.tab-content.active {
@@ -2028,6 +2023,8 @@
 
 				const codeOut = $("codeOutput");
 				codeOut.innerHTML = '<div style="padding:1rem; color:var(--muted-foreground)">Загрузка...</div>';
+
+				if (typeof expandSheet === "function") expandSheet();
 
 				const params = new URLSearchParams();
 				types.forEach((t) => params.append("types", t));
@@ -2464,6 +2461,8 @@
 				$("resultTitle").innerText = `Сезон (${start} - ${end})`;
 				$("codeOutput").innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg><p>Выберите эпизод для просмотра деталей</p></div>';
 
+				if (typeof expandSheet === "function") expandSheet();
+
 				const grid = $("gridContainer");
 				grid.className = "season-grid";
 				grid.innerHTML = "";
@@ -2551,7 +2550,7 @@
 
 				if (!sheet || !handle) return;
 
-				const isMobile = () => window.innerWidth <= 600;
+				const isMobile = () => window.innerWidth <= 900;
 
 				let isDragging = false;
 				let startY = 0;
@@ -2586,34 +2585,14 @@
 				}
 
 				function snapToNearest(height, velocity) {
-					const vh = getViewportHeight();
-					const defaultHeight = vhToPixels(DEFAULT_VH);
 					const expandedHeight = vhToPixels(EXPANDED_VH);
 
 					if (Math.abs(velocity) > 0.5) {
-						if (velocity > 0) {
-							if (height > COLLAPSED + 50) {
-								return height > defaultHeight ? expandedHeight : defaultHeight;
-							}
-							return defaultHeight;
-						} else {
-							if (height < expandedHeight - 50) {
-								return height < defaultHeight ? COLLAPSED : defaultHeight;
-							}
-							return defaultHeight;
-						}
+						return velocity > 0 ? expandedHeight : COLLAPSED;
 					}
 
-					const mid1 = (COLLAPSED + defaultHeight) / 2;
-					const mid2 = (defaultHeight + expandedHeight) / 2;
-
-					if (height < mid1) {
-						return COLLAPSED;
-					} else if (height < mid2) {
-						return defaultHeight;
-					} else {
-						return expandedHeight;
-					}
+					const midPoint = (COLLAPSED + expandedHeight) / 2;
+					return height < midPoint ? COLLAPSED : expandedHeight;
 				}
 
 				function updateSheetClass(height) {
@@ -2713,13 +2692,12 @@
 					const now = Date.now();
 					if (now - lastTap < 300) {
 						const expandedHeight = vhToPixels(EXPANDED_VH);
-						const defaultHeight = vhToPixels(DEFAULT_VH);
 
 						sheet.style.transition = "height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
 
 						if (currentHeight >= expandedHeight - 50) {
-							setSheetHeight(defaultHeight);
-							updateSheetClass(defaultHeight);
+							setSheetHeight(COLLAPSED);
+							updateSheetClass(COLLAPSED);
 						} else {
 							setSheetHeight(expandedHeight);
 							updateSheetClass(expandedHeight);
@@ -2732,10 +2710,21 @@
 					lastTap = now;
 				});
 
+				window.expandSheet = function () {
+					if (!isMobile()) return;
+					const expandedHeight = vhToPixels(EXPANDED_VH);
+					sheet.style.transition = "height 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+					setSheetHeight(expandedHeight);
+					updateSheetClass(expandedHeight);
+					setTimeout(() => {
+						sheet.style.transition = "";
+					}, 300);
+				};
+
 				function initMobileSheet() {
 					if (isMobile()) {
-						const defaultHeight = vhToPixels(DEFAULT_VH);
-						setSheetHeight(defaultHeight);
+						setSheetHeight(COLLAPSED);
+						updateSheetClass(COLLAPSED);
 					}
 				}
 
@@ -2743,10 +2732,8 @@
 					if (isMobile()) {
 						if (sheet.classList.contains("expanded")) {
 							setSheetHeight(vhToPixels(EXPANDED_VH));
-						} else if (sheet.classList.contains("collapsed")) {
-							setSheetHeight(COLLAPSED);
 						} else {
-							setSheetHeight(vhToPixels(DEFAULT_VH));
+							setSheetHeight(COLLAPSED);
 						}
 					} else {
 						sheet.style.height = "";
