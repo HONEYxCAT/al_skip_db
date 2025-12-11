@@ -2272,8 +2272,9 @@
 
 			if (!track) return;
 
-			let startPercent = 0;
-			let endPercent = 10;
+			let startPercent = (60 / epDuration) * 100;
+			if (Number.isNaN(startPercent)) startPercent = 4;
+			let endPercent = startPercent + 15;
 
 			function updateFromInputs() {
 				const startTime = timeToSeconds($("startMins").value, $("startSecs").value);
@@ -2539,13 +2540,14 @@
 								<div class="tab active" onclick="switchTab('editor')">Добавить</div>
 								<div class="tab" onclick="switchTab('json')">JSON</div>
 							</div>
-							<div id="tabJson" class="tab-content active">
-								<pre>${syntaxHighlight(res.data || res.error)}</pre>
-							</div>
-							<div id="tabEditor" class="tab-content">
+							<div id="tabEditor" class="tab-content active">
 								${renderSkipEditor(res.ep)}
 							</div>
+							<div id="tabJson" class="tab-content">
+								<pre>${syntaxHighlight(res.data || res.error)}</pre>
+							</div>
 						`;
+						initSkipEditor();
 					}
 				};
 			});
