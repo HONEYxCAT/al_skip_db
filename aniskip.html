@@ -1480,6 +1480,10 @@
 				align-items: center;
 			}
 
+			.season-grid.hide-on-mobile {
+				display: none !important;
+			}
+
 			.ep-badge {
 				height: 2rem;
 				min-width: 2.5rem;
@@ -2751,8 +2755,20 @@
 				}, 3000);
 			}
 
+			function updateGridMobileVisibility() {
+				const grid = $("gridContainer");
+				if (!grid) return;
+				const count = grid.children.length;
+				if (count <= 1) {
+					grid.classList.add("hide-on-mobile");
+				} else {
+					grid.classList.remove("hide-on-mobile");
+				}
+			}
+
 			function clearLog() {
 				$("gridContainer").innerHTML = "";
+				updateGridMobileVisibility();
 				$("codeOutput").innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-arrow-right"></use></svg><p>Консоль очищена</p></div>';
 				$("codeLabel").innerText = "Терминал";
 				$("resultTitle").innerText = "Консоль";
@@ -3714,6 +3730,7 @@
 				if (btn) btn.innerText = isCollapsed ? "Развернуть серии" : "Свернуть серии";
 				if (grid) {
 					grid.className = "season-grid" + (isCollapsed ? " collapsed-mode" : "");
+					updateGridMobileVisibility();
 				}
 			}
 
@@ -3751,6 +3768,7 @@
 					fragment.appendChild(node);
 				}
 				grid.appendChild(fragment);
+				updateGridMobileVisibility();
 
 				const btn = $("collapseBtn");
 				if (btn) btn.classList.add("visible");
