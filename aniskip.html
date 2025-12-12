@@ -1480,10 +1480,6 @@
 				align-items: center;
 			}
 
-			.season-grid.hide-on-mobile {
-				display: none !important;
-			}
-
 			.ep-badge {
 				height: 2rem;
 				min-width: 2.5rem;
@@ -2164,6 +2160,13 @@
 			padding: 0 0.7rem;
 			font-size: 0.75rem;
 		}
+
+		#gridContainer:empty {
+			display: none !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			border: none !important;
+		}
 	</style>
 </head>
 
@@ -2755,20 +2758,8 @@
 				}, 3000);
 			}
 
-			function updateGridMobileVisibility() {
-				const grid = $("gridContainer");
-				if (!grid) return;
-				const count = grid.children.length;
-				if (count <= 1) {
-					grid.classList.add("hide-on-mobile");
-				} else {
-					grid.classList.remove("hide-on-mobile");
-				}
-			}
-
 			function clearLog() {
 				$("gridContainer").innerHTML = "";
-				updateGridMobileVisibility();
 				$("codeOutput").innerHTML = '<div class="empty-state"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="#icon-arrow-right"></use></svg><p>Консоль очищена</p></div>';
 				$("codeLabel").innerText = "Терминал";
 				$("resultTitle").innerText = "Консоль";
@@ -3730,7 +3721,38 @@
 				if (btn) btn.innerText = isCollapsed ? "Развернуть серии" : "Свернуть серии";
 				if (grid) {
 					grid.className = "season-grid" + (isCollapsed ? " collapsed-mode" : "");
-					updateGridMobileVisibility();
+				}
+			}
+
+			function checkCollapseVisibility() {
+				const grid = $("gridContainer");
+				const btn = $("collapseBtn");
+				if (!grid || !btn) return;
+
+				if (grid.children.length === 0) {
+					btn.classList.remove("visible");
+					return;
+				}
+
+				const style = getComputedStyle(grid);
+				const containerW = grid.clientWidth - (parseFloat(style.paddingLeft) || 0) - (parseFloat(style.paddingRight) || 0);
+
+				const rootStyle = getComputedStyle(document.documentElement);
+				const rem = parseFloat(rootStyle.fontSize);
+				const itemMinW = 3.25 * rem;
+				const gap = 0.5 * rem;
+
+				const maxCols = Math.floor((containerW + gap + 0.1) / (itemMinW + gap));
+
+				if (grid.children.length > maxCols) {
+					btn.classList.add("visible");
+				} else {
+					btn.classList.remove("visible");
+					if (grid.classList.contains("collapsed-mode")) {
+						grid.classList.remove("collapsed-mode");
+						btn.innerText = "Свернуть серии";
+						localStorage.setItem("aniskip_grid_collapsed", "false");
+					}
 				}
 			}
 
@@ -3768,10 +3790,8 @@
 					fragment.appendChild(node);
 				}
 				grid.appendChild(fragment);
-				updateGridMobileVisibility();
 
-				const btn = $("collapseBtn");
-				if (btn) btn.classList.add("visible");
+				checkCollapseVisibility();
 
 				const promises = [];
 				for (let i = start; i <= end; i++) {
@@ -4369,6 +4389,8 @@
 					{ passive: false },
 				);
 			})();
+
+			window.addEventListener("resize", checkCollapseVisibility);
 		})();
 	</script>
 </body>
