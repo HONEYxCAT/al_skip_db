@@ -2373,10 +2373,8 @@
 
 		function formatTimeDisplay(totalSeconds) {
 			if (timeInputMode === 'seconds') {
-				return parseFloat(totalSeconds.toFixed(2)) + "с"; // 'с' is Cyrillic 's', matching existing Russian UI? Or 's'?
-				// User said "seconds".
-				// Let's use clean number + "s" or just number?
-				return parseFloat(totalSeconds.toFixed(2)) + "s";
+
+				return Math.round(totalSeconds) + "с";
 			}
 			return formatTime(totalSeconds);
 		}
@@ -2703,8 +2701,8 @@
 			localStorage.setItem("aniskip_time_mode", timeInputMode);
 			const editorTab = document.getElementById("tabEditor");
 			if (editorTab && editorTab.classList.contains("active")) {
-				// However, initSkipEditor uses global logic to restore selection? 
-				// So if we just re-run initSkipEditor() logic after DOM update, we should be fine?
+
+
 				const epNum = $("epNum").value;
 				editorTab.innerHTML = renderSkipEditor(epNum);
 				initSkipEditor();
@@ -2783,7 +2781,7 @@
 							</div>
 							` : `
 							<div class="time-input-fields" mode="seconds" style="flex: 1">
-								<input type="number" id="startAbsSecs" value="0" min="0" max="${epDur}" step="0.5">
+								<input type="number" id="startAbsSecs" value="0" min="0" max="${epDur}" step="1">
 								<span class="mobile-unit" style="display:inline; margin-left:6px; white-space:nowrap; font-size: 0.75rem;">Сек.</span>
 							</div>
 							`}
@@ -2805,7 +2803,7 @@
 							</div>
 							` : `
 							<div class="time-input-fields" mode="seconds" style="flex: 1">
-								<input type="number" id="endAbsSecs" value="0" min="0" max="${epDur}" step="0.5">
+								<input type="number" id="endAbsSecs" value="0" min="0" max="${epDur}" step="1">
 								<span class="mobile-unit" style="display:inline; margin-left:6px; white-space:nowrap; font-size: 0.75rem;">Сек.</span>
 							</div>
 							`}
@@ -2895,8 +2893,8 @@
 			btn.classList.add("active");
 			if (window.updateEditorSkipSelection) window.updateEditorSkipSelection(type);
 		}
-		const TIMELINE_SCROLL_STEP_MS = 50; // Milliseconds per step
-		const TIME_INPUT_SCROLL_STEP_MS = 20;  // Milliseconds per step
+		const TIMELINE_SCROLL_STEP_MS = 50;
+		const TIME_INPUT_SCROLL_STEP_MS = 20;
 
 		class ScrollWheel {
 			constructor(element, onScroll) {
@@ -2908,10 +2906,10 @@
 				this.velocity = 0;
 				this.lastTime = 0;
 				this.isDragging = false;
-				this.lastPos = 0; // Tracks X or Y depending on orientation
+				this.lastPos = 0;
 				this.friction = 0.95;
 				this.animating = false;
-				this.moveHistory = []; // Stores recent move events for velocity calculation
+				this.moveHistory = [];
 
 				this.isHorizontal = false;
 
@@ -2944,7 +2942,7 @@
 			handleWheel(e) {
 				e.preventDefault();
 				const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
-				// Scale it down slightly for better control
+
 				const impulse = delta * 1.5;
 				this.velocity += impulse;
 				this.velocity = Math.max(-2000, Math.min(2000, this.velocity));
@@ -2961,7 +2959,7 @@
 				this.isDragging = true;
 				this.lastPos = this.isHorizontal ? e.clientX : e.clientY;
 				this.velocity = 0;
-				this.moveHistory = []; // Reset history
+				this.moveHistory = [];
 
 				this.element.setPointerCapture(e.pointerId);
 				this.element.addEventListener('pointermove', this.boundHandlePointerMove);
@@ -2996,13 +2994,13 @@
 				let flingVelocity = 0;
 				if (recentMoves.length > 0) {
 					const totalDelta = recentMoves.reduce((acc, m) => acc + m.delta, 0);
-					// We use a simplified boost factor
+
 					flingVelocity = -(totalDelta * 15);
 				}
 
 				this.velocity = flingVelocity;
 
-				if (Math.abs(this.velocity) > 10) { // Threshold for animation start
+				if (Math.abs(this.velocity) > 10) {
 					this.animating = true;
 					this.lastTime = performance.now();
 					requestAnimationFrame(this.animate);
@@ -3019,7 +3017,7 @@
 					requestAnimationFrame(this.animate);
 					return;
 				}
-				this.velocity *= Math.pow(this.friction, dt * 60); // framerate independent friction
+				this.velocity *= Math.pow(this.friction, dt * 60);
 
 				if (Math.abs(this.velocity) < 10) {
 					this.animating = false;
@@ -3114,8 +3112,8 @@
 				if (timeInputMode === "seconds") {
 					const s = $("startAbsSecs");
 					const e = $("endAbsSecs");
-					if (s) s.value = Math.round(startTime * 100) / 100;
-					if (e) e.value = Math.round(endTime * 100) / 100;
+					if (s) s.value = Math.round(startTime);
+					if (e) e.value = Math.round(endTime);
 				} else {
 					const startParts = secondsToTime(startTime);
 					const endParts = secondsToTime(endTime);
@@ -3249,7 +3247,7 @@
 			const timelineScrollEl = $("timelineScroll");
 			if (timelineScrollEl) {
 				new ScrollWheel(timelineScrollEl, (delta) => {
-					// Adjust direction: Drag UP (positive delta) -> Increment time (Shift Right)
+
 					const changeSec = delta * (TIMELINE_SCROLL_STEP_MS / 1000);
 					const currentDur = (endPercent - startPercent) * epDuration / 100;
 
@@ -3536,7 +3534,7 @@
 			navigator.clipboard.writeText(text).then(() => {
 				const btn = document.querySelector("#copyResultBtn");
 				const orig = btn.innerText.trim();
-				// Save full HTML to restore icon
+
 				const origHtml = btn.innerHTML;
 				btn.innerText = "Скопировано!";
 				setTimeout(() => (btn.innerHTML = origHtml), 1500);
